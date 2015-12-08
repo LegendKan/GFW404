@@ -1,0 +1,46 @@
+{{template "base/base.html" .}}
+{{define "head"}}{{end}}
+{{define "meta"}}
+<title>{{.Title}} - beego: {{i18n .Lang "app_intro"}}</title>
+<link rel="stylesheet" href="/static/css/cartstyle.css" />
+{{end}}
+{{define "body"}}
+<div class="container main-container">
+	<div class="row">
+		<div class="col-md-12">
+			<div class="box">
+				<div class="cell slim page-box markdown">
+					<div id="order-cart">
+
+						<h1>产品配置</h1>
+
+						<p>您选择的产品/服务有以下配置选项供您选择.</p>
+
+						<form method="post" action="/cart/add">
+						<input type="hidden" name="token" value="b9bc76d76721035b4f3be971de0900faf45c4a82" />
+						<input type="hidden" name="configure" value="true">
+
+
+						<p class="cartsubheading">产品/服务</p>
+						<div class="cartbox"><strong>Shadowsocks 帐号 - {{.service.Title}}</strong><br />
+						<br />{{str2html .service.Description}}<br />
+						</div>
+
+						<input type="hidden" name="previousbillingcycle" value="annually" />
+						<input type="hidden" name="serviceid" value="{{.service.Id}}" />
+						<p class="cartsubheading">账单周期</p>
+						<div class="cartbox"><select name="billingcycle" onchange="submit()">
+						<option value="monthly" selected="selected">￥{{.service.Month}} RMB 月付</option><option value="quarterly">￥{{.service.Quarter}} RMB 季付</option><option value="yearly">￥{{.service.Year}} RMB 年付</option></select>
+						</div>
+						<br />
+						<p align="center"><input type="submit" value="添加到购物车" /></p>
+
+						</form>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{{end}}

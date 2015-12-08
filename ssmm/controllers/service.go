@@ -1,0 +1,44 @@
+package controllers
+
+import (
+	"fmt"
+	"ssmm/models"
+	"strings"
+)
+
+// HomeRouter serves home page.
+type ServiceController struct {
+	baseController
+}
+
+// Get implemented Get method for HomeRouter.
+func (this *ServiceController) Get() {
+	this.Data["IsService"] = true
+	this.Data["Title"] = "产品与服务"
+	this.TplNames = "service.html"
+}
+
+func (c *ServiceController) GetActive() {
+	var sortby []string
+	var order []string
+	var limit int64 = 100
+	var offset int64 = 0
+	fields := []string{"Id", "Location", "Title", "Description", "Month", "Quarter", "Year", "Remain"}
+	query := map[string]string{
+		"IsOnline": "1",
+	}
+	l, _ := models.GetAllActiveServer(query, fields, sortby, order, offset, limit)
+	fmt.Println("hello", len(l))
+	for i := 0; i < len(l); i++ {
+		//server := s.(models.Server)
+		//tmp := server.Description
+		l[i].Description = strings.Replace(l[0].Description, "|", "<br /><br />", -1)
+		//server.Description = tmp
+		fmt.Println(l[i].Description)
+	}
+	fmt.Println(l[0].Description)
+	c.Data["services"] = l
+	c.Data["Title"] = "服务与产品"
+	c.Data["IsService"] = true
+	c.TplNames = "service.html"
+}

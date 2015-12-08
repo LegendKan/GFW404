@@ -1,0 +1,58 @@
+{{template "base/base.html" .}}
+{{define "head"}}{{end}}
+{{define "meta"}}
+<title>{{.Title}} - beego: {{i18n .Lang "app_intro"}}</title>
+<link rel="stylesheet" href="/static/css/cartstyle.css" />
+{{end}}
+{{define "body"}}
+<div class="container main-container">
+	<div class="row">
+		<div class="col-md-12">
+			<div class="box">
+				<div class="cell slim page-box">
+					<div id="order-cart">
+
+						<h1>用户登录</h1>
+						{{if .haserror}}
+						<div class="errorbox"> &nbsp;#&nbsp; {{.error}}</li> &nbsp;#&nbsp; </div><br />
+						{{end}}
+						<form method="post" action="/user/login" class="form-stacked">
+						<input type="hidden" name="token" value="db0d3b91b3b0c3cb7d31e176f0ed71ca48de1a0c" />
+
+						<div class="logincontainer">
+
+						    <fieldset class="control-group">
+
+							    <div class="control-group">
+								    <label class="control-label" for="username">电子邮件地址:</label>
+									<div class="controls">
+									    <input class="input-xlarge" name="username" id="username" type="text" />
+									</div>
+								</div>
+
+								<div class="control-group">
+								    <label class="control-label" for="password">密码:</label>
+									<div class="controls">
+									    <input class="input-xlarge" name="password" id="password" type="password"/>
+									</div>
+								</div>
+
+						        <div align="center">
+								  <div class="loginbtn"><input type="submit" class="btn btn-primary btn-large" style="padding:10px 30px 10px 30px;" value="登录" /></div>
+						          <div class="rememberme"><input type="checkbox" name="rememberme" /> <strong>自动登录</strong></div>
+						          <br />
+						          <br />
+						          <p><a href="/user/register">没有账号点击注册</a></p>
+						        </div>
+							</fieldset>
+
+						</div>
+						</form>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{{end}}

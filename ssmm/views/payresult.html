@@ -1,0 +1,29 @@
+{{template "base/base.html" .}}
+{{define "head"}}{{end}}
+{{define "meta"}}
+<title>支付结果</title>
+<link rel="stylesheet" href="/static/css/cartstyle.css" />
+{{end}}
+{{define "body"}}
+<div class="container main-container">
+	<div class="row">
+		<div class="col-md-12">
+			<div class="box">
+				<div class="cell slim page-box markdown">
+					<div id="order-cart">
+
+						<h1>支付结果</h1>
+						{{if eq .payresult "0"}}
+						<h2>恭喜您支付成功.</h2>
+						{{else}}
+						<h2>您的支付未能成功！</h2>
+						{{end}}
+						<p><a href="/user">回到用户中心</a></p>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{{end}}

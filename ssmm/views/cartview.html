@@ -1,0 +1,232 @@
+{{template "base/base.html" .}}
+{{define "head"}}{{end}}
+{{define "meta"}}
+<title>{{.Title}} - beego: {{i18n .Lang "app_intro"}}</title>
+<link rel="stylesheet" href="/static/css/cartstyle.css" />
+<script type="text/javascript" src="/static/js/jquery-1.11.2.min.js"></script>
+<script type="text/javascript" src="/static/js/pwstrength.js"></script>
+{{end}}
+{{define "body"}}
+<div class="container main-container">
+	<div class="row">
+		<div class="col-md-12">
+			<div class="box">
+				<div class="cell slim page-box">
+					<script>
+					window.langPasswordStrength = "密码强度";
+					window.langPasswordWeak = "弱 (请尽量使用复杂密码以提高安全性)";
+					window.langPasswordModerate = "一般 (请尽量使用复杂密码以提高安全性)";
+					window.langPasswordStrong = "安全 (请您妥善保管您的密码)";
+					</script>
+
+					<div id="order-cart">
+
+					<h1>购物车</h1>
+					{{if .haserror}}
+						<div class="errorbox"> &nbsp;#&nbsp; {{.error}}</li> &nbsp;#&nbsp; </div><br />
+					{{end}}
+					<script language="javascript">
+					function removeItem(type,num) {
+					    var response = confirm("您确定从购物车删除此项目?");
+					    if (response) {
+					        window.location = 'cart.php?a=remove&r='+type+'&i='+num;
+					    }
+					}
+					function emptyCart(type,num) {
+					    var response = confirm("您确认清空购物车?");
+					    if (response) {
+					        window.location = 'cart.php?a=empty';
+					    }
+					}
+					function showloginform() {				        
+					    jQuery("#loginfrm").slideToggle();
+					    jQuery("#mainfrm").slideToggle();
+					}
+					function domaincontactchange() {
+					    if (jQuery("#domaincontact").val()=="addingnew") {
+					        jQuery("#domaincontactfields").slideDown();
+					    } else {
+					        jQuery("#domaincontactfields").slideUp();
+					    }
+					}
+					function showCCForm() {
+					    jQuery("#ccinputform").slideDown();
+					}
+					function hideCCForm() {
+					    jQuery("#ccinputform").slideUp();
+					}
+					function useExistingCC() {
+					    jQuery(".newccinfo").hide();
+					}
+					function enterNewCC() {
+					    jQuery(".newccinfo").show();
+					}
+					</script>
+
+
+
+					<form method="post" action="/cart.php?a=view">
+					<input type="hidden" name="token" value="08cfde69ea2ab7a41c75239ada2342b76ccc4c7d" />
+
+					<table class="carttable">
+					<tr width="100%"><th width="55%">描述</th><th width="45%">价格</th></tr>
+
+					<tr><td>
+					<strong><em>Shadowsocks 帐号</em> - Shadowsocks.com 普通版第五期</strong><br />
+					<div align="right">如果您需要订购多个账号，请输入数目： <input type="text" name="qty[0]" size="3" value="1" /> <input type="submit" value="更新" /></div>
+					</td><td class="textcenter"><strong>￥99.00 RMB</strong></td></tr>
+					<tr class="config"><td><a href="/cart.php?a=confproduct&i=0" class="textgreen">[编辑配置]</a> <a href="#" onclick="removeItem('p','0');return false" class="textred">[移除]</a></td><td>&nbsp;</td></tr>
+
+
+
+
+
+					<tr class="summary"><td class="textright">小计: &nbsp;</td><td class="textcenter">￥99.00 RMB</td></tr>
+					<tr class="summary"><td class="textright">当前总计: &nbsp;</td><td class="textcenter">￥99.00 RMB</td></tr>
+					<tr class="summary"><td class="textright">下次付款总计: &nbsp;</td><td class="textcenter">
+					￥99.00 RMB 年付<br /></td></tr>
+					</table>
+
+					</form>
+
+					<table width="100%"><tr><td width="55%" valign="top" class="textcenter">
+
+					<form method="post" action="/cart.php?a=view">
+					<input type="hidden" name="token" value="ae32670b3fd300e4e06841299cfa37b011cda73e" />
+					<input type="hidden" name="validatepromo" value="true" />
+					<strong>优惠码</strong>
+					<input type="text" name="promocode" size="20" />&nbsp<input type="submit" value="验证 >>" /></form>
+
+					</td><td width="45%" class="textcenter">
+
+					<input type="button" value="清空购物车" onclick="emptyCart();return false" class="buttonwarn" />&nbsp<input type="button" value="继续购物" onclick="window.location='cart.php'" class="button" />
+
+
+					</td></tr></table>
+
+					<br />
+
+
+					<div class="center90">
+
+					<p class="cartsubheading">您的详情 - <strong>已经注册?</strong> <a href="/cart.php?a=login" onclick="showloginform();return false;">点击登录</a></p>
+
+					<form action="dologin.php" method="post">
+					<input type="hidden" name="token" value="08cfde69ea2ab7a41c75239ada2342b76ccc4c7d" />
+					<div class="cartbox" id="loginfrm" style="display:none;">
+					<table align="center">
+					<tr><td align="right">电子邮件地址:</td><td><input type="text" name="username" size="40" value="" /></td></tr>
+					<tr><td align="right">密码:</td><td><input type="password" name="password" size="25" /></td></tr>
+					</table>
+					<p align="center"><input type="submit" value="登录" /></p>
+					</div>
+					</form>
+
+					<form method="post" action="/cart.php?a=checkout" id="mainfrm">
+					<input type="hidden" name="token" value="08cfde69ea2ab7a41c75239ada2342b76ccc4c7d" />
+					<input type="hidden" name="submit" value="true" />
+
+					<table cellspacing="1" cellpadding="0" class="frame"><tr><td width="50%" valign="top">
+
+					<table width="100%" cellpadding="2">
+					<tr><td width="100" class="fieldarea">名字</td><td><input type="text" name="firstname" style="width:80%;" value="" /></td></tr>
+					<tr><td class="fieldarea">姓氏</td><td><input type="text" name="lastname" style="width:80%;" value="" /></td></tr>
+					<tr><td class="fieldarea">公司名称 (选填)</td><td><input type="text" name="companyname" style="width:80%;" value="" /></td></tr>
+					<tr><td class="fieldarea" style="height:21px;"><br /></td><td></td></tr>
+					<tr><td class="fieldarea">电子邮件地址</td><td><input type="text" name="email" style="width:90%;" value="" /></td></tr>
+					<tr><td class="fieldarea">密码</td><td><input type="password" name="password" id="newpw" size="20" value="" /></td></tr>
+					<tr><td class="fieldarea">确认密码</td><td><input type="password" name="password2" size="20" value="" /></td></tr>
+					</table>
+
+					</td><td width="50%" valign="top">
+
+					<table width="100%" cellpadding="2">
+					<tr><td width="100" class="fieldarea">联系地址（选填，可不写）</td><td><input type="text" name="address1" style="width:80%;" value="" /></td></tr>
+					<tr><td class="fieldarea">地址 (第二行，选填)</td><td><input type="text" name="address2" style="width:80%;" value="" /></td></tr>
+					<tr><td class="fieldarea">城市（选填）</td><td><input type="text" name="city" style="width:80%;" value="" /></td></tr>
+					<tr><td class="fieldarea">省份（选填）</td><td><input type="text" name="state" style="width:80%;" value="" /></td></tr>
+					<tr><td class="fieldarea">邮编（选填）</td><td><input type="text" name="postcode" size="15" value="" /></td></tr>
+					<tr><td class="fieldarea">国家</td><td><select name="country" id="country"><option value="AF">Afghanistan</option><option value="AX">Aland Islands</option><option value="AL">Albania</option><option value="DZ">Algeria</option><option value="AS">American Samoa</option><option value="AD">Andorra</option><option value="AO">Angola</option><option value="AI">Anguilla</option><option value="AQ">Antarctica</option><option value="AG">Antigua And Barbuda</option><option value="AR">Argentina</option><option value="AM">Armenia</option><option value="AW">Aruba</option><option value="AU">Australia</option><option value="AT">Austria</option><option value="AZ">Azerbaijan</option><option value="BS">Bahamas</option><option value="BH">Bahrain</option><option value="BD">Bangladesh</option><option value="BB">Barbados</option><option value="BY">Belarus</option><option value="BE">Belgium</option><option value="BZ">Belize</option><option value="BJ">Benin</option><option value="BM">Bermuda</option><option value="BT">Bhutan</option><option value="BO">Bolivia</option><option value="BA">Bosnia And Herzegovina</option><option value="BW">Botswana</option><option value="BV">Bouvet Island</option><option value="BR">Brazil</option><option value="IO">British Indian Ocean Territory</option><option value="BN">Brunei Darussalam</option><option value="BG">Bulgaria</option><option value="BF">Burkina Faso</option><option value="BI">Burundi</option><option value="KH">Cambodia</option><option value="CM">Cameroon</option><option value="CA">Canada</option><option value="CV">Cape Verde</option><option value="KY">Cayman Islands</option><option value="CF">Central African Republic</option><option value="TD">Chad</option><option value="CL">Chile</option><option value="CN" selected="selected">China</option><option value="CX">Christmas Island</option><option value="CC">Cocos (Keeling) Islands</option><option value="CO">Colombia</option><option value="KM">Comoros</option><option value="CG">Congo</option><option value="CD">Congo, Democratic Republic</option><option value="CK">Cook Islands</option><option value="CR">Costa Rica</option><option value="CI">Cote D'Ivoire</option><option value="HR">Croatia</option><option value="CU">Cuba</option><option value="CW">Curacao</option><option value="CY">Cyprus</option><option value="CZ">Czech Republic</option><option value="DK">Denmark</option><option value="DJ">Djibouti</option><option value="DM">Dominica</option><option value="DO">Dominican Republic</option><option value="EC">Ecuador</option><option value="EG">Egypt</option><option value="SV">El Salvador</option><option value="GQ">Equatorial Guinea</option><option value="ER">Eritrea</option><option value="EE">Estonia</option><option value="ET">Ethiopia</option><option value="FK">Falkland Islands (Malvinas)</option><option value="FO">Faroe Islands</option><option value="FJ">Fiji</option><option value="FI">Finland</option><option value="FR">France</option><option value="GF">French Guiana</option><option value="PF">French Polynesia</option><option value="TF">French Southern Territories</option><option value="GA">Gabon</option><option value="GM">Gambia</option><option value="GE">Georgia</option><option value="DE">Germany</option><option value="GH">Ghana</option><option value="GI">Gibraltar</option><option value="GR">Greece</option><option value="GL">Greenland</option><option value="GD">Grenada</option><option value="GP">Guadeloupe</option><option value="GU">Guam</option><option value="GT">Guatemala</option><option value="GG">Guernsey</option><option value="GN">Guinea</option><option value="GW">Guinea-Bissau</option><option value="GY">Guyana</option><option value="HT">Haiti</option><option value="HM">Heard Island & Mcdonald Islands</option><option value="VA">Holy See (Vatican City State)</option><option value="HN">Honduras</option><option value="HK">Hong Kong</option><option value="HU">Hungary</option><option value="IS">Iceland</option><option value="IN">India</option><option value="ID">Indonesia</option><option value="IR">Iran, Islamic Republic Of</option><option value="IQ">Iraq</option><option value="IE">Ireland</option><option value="IM">Isle Of Man</option><option value="IL">Israel</option><option value="IT">Italy</option><option value="JM">Jamaica</option><option value="JP">Japan</option><option value="JE">Jersey</option><option value="JO">Jordan</option><option value="KZ">Kazakhstan</option><option value="KE">Kenya</option><option value="KI">Kiribati</option><option value="KR">Korea</option><option value="KW">Kuwait</option><option value="KG">Kyrgyzstan</option><option value="LA">Lao People's Democratic Republic</option><option value="LV">Latvia</option><option value="LB">Lebanon</option><option value="LS">Lesotho</option><option value="LR">Liberia</option><option value="LY">Libyan Arab Jamahiriya</option><option value="LI">Liechtenstein</option><option value="LT">Lithuania</option><option value="LU">Luxembourg</option><option value="MO">Macao</option><option value="MK">Macedonia</option><option value="MG">Madagascar</option><option value="MW">Malawi</option><option value="MY">Malaysia</option><option value="MV">Maldives</option><option value="ML">Mali</option><option value="MT">Malta</option><option value="MH">Marshall Islands</option><option value="MQ">Martinique</option><option value="MR">Mauritania</option><option value="MU">Mauritius</option><option value="YT">Mayotte</option><option value="MX">Mexico</option><option value="FM">Micronesia, Federated States Of</option><option value="MD">Moldova</option><option value="MC">Monaco</option><option value="MN">Mongolia</option><option value="ME">Montenegro</option><option value="MS">Montserrat</option><option value="MA">Morocco</option><option value="MZ">Mozambique</option><option value="MM">Myanmar</option><option value="NA">Namibia</option><option value="NR">Nauru</option><option value="NP">Nepal</option><option value="NL">Netherlands</option><option value="AN">Netherlands Antilles</option><option value="NC">New Caledonia</option><option value="NZ">New Zealand</option><option value="NI">Nicaragua</option><option value="NE">Niger</option><option value="NG">Nigeria</option><option value="NU">Niue</option><option value="NF">Norfolk Island</option><option value="MP">Northern Mariana Islands</option><option value="NO">Norway</option><option value="OM">Oman</option><option value="PK">Pakistan</option><option value="PW">Palau</option><option value="PS">Palestine, State of</option><option value="PA">Panama</option><option value="PG">Papua New Guinea</option><option value="PY">Paraguay</option><option value="PE">Peru</option><option value="PH">Philippines</option><option value="PN">Pitcairn</option><option value="PL">Poland</option><option value="PT">Portugal</option><option value="PR">Puerto Rico</option><option value="QA">Qatar</option><option value="RE">Reunion</option><option value="RO">Romania</option><option value="RU">Russian Federation</option><option value="RW">Rwanda</option><option value="BL">Saint Barthelemy</option><option value="SH">Saint Helena</option><option value="KN">Saint Kitts And Nevis</option><option value="LC">Saint Lucia</option><option value="MF">Saint Martin</option><option value="PM">Saint Pierre And Miquelon</option><option value="VC">Saint Vincent And Grenadines</option><option value="WS">Samoa</option><option value="SM">San Marino</option><option value="ST">Sao Tome And Principe</option><option value="SA">Saudi Arabia</option><option value="SN">Senegal</option><option value="RS">Serbia</option><option value="SC">Seychelles</option><option value="SL">Sierra Leone</option><option value="SG">Singapore</option><option value="SK">Slovakia</option><option value="SI">Slovenia</option><option value="SB">Solomon Islands</option><option value="SO">Somalia</option><option value="ZA">South Africa</option><option value="GS">South Georgia And Sandwich Isl.</option><option value="ES">Spain</option><option value="LK">Sri Lanka</option><option value="SD">Sudan</option><option value="SR">Suriname</option><option value="SJ">Svalbard And Jan Mayen</option><option value="SZ">Swaziland</option><option value="SE">Sweden</option><option value="CH">Switzerland</option><option value="SY">Syrian Arab Republic</option><option value="TW">Taiwan</option><option value="TJ">Tajikistan</option><option value="TZ">Tanzania</option><option value="TH">Thailand</option><option value="TL">Timor-Leste</option><option value="TG">Togo</option><option value="TK">Tokelau</option><option value="TO">Tonga</option><option value="TT">Trinidad And Tobago</option><option value="TN">Tunisia</option><option value="TR">Turkey</option><option value="TM">Turkmenistan</option><option value="TC">Turks And Caicos Islands</option><option value="TV">Tuvalu</option><option value="UG">Uganda</option><option value="UA">Ukraine</option><option value="AE">United Arab Emirates</option><option value="GB">United Kingdom</option><option value="US">United States</option><option value="UM">United States Outlying Islands</option><option value="UY">Uruguay</option><option value="UZ">Uzbekistan</option><option value="VU">Vanuatu</option><option value="VE">Venezuela</option><option value="VN">Viet Nam</option><option value="VG">Virgin Islands, British</option><option value="VI">Virgin Islands, U.S.</option><option value="WF">Wallis And Futuna</option><option value="EH">Western Sahara</option><option value="YE">Yemen</option><option value="ZM">Zambia</option><option value="ZW">Zimbabwe</option></select></td></tr>
+					<tr><td class="fieldarea">电话号码（选填）</td><td><input type="text" name="phonenumber" size="20" value="" /></td></tr>
+					</table>
+
+					</td></tr></table>
+
+					<p align="center"><script language="javascript">showStrengthBar();</script></p>
+					<table cellspacing="1" cellpadding="0" class="frame"><tr><td>
+					<table width="100%" cellpadding="2">
+					<tr><td width="200" class="fieldarea">订阅促销邮件</td><td><select name="customfield[5]" id="customfield5"><option value="Yes">Yes</option><option value="No">No</option></select> 您是否愿意收到我们的促销邮件？</td></tr>
+					</table>
+					</td></tr></table>
+
+
+
+					<p class="cartsubheading">付款方式</p>
+					<p align="center"><label><input type="radio" name="paymentmethod" value="alipay" onclick="hideCCForm()" checked />Alipay 支付宝全能接口 v2.0</label> <label><input type="radio" name="paymentmethod" value="banktransfer" onclick="hideCCForm()" />比特币付款</label> </p>
+
+					<div id="ccinputform" style="display:none;">
+					<table cellspacing="1" cellpadding="0" class="frame"><tr><td>
+					<table width="100%" cellpadding="2">
+					<input type="hidden" name="ccinfo" value="new" /><tr class="newccinfo"><td width="150" class="fieldarea">卡片类型</td><td><select name="cctype" id="cctype">
+					<option>Visa</option>
+					<option>MasterCard</option>
+					<option>Discover</option>
+					<option>American Express</option>
+					<option>JCB</option>
+					<option>EnRoute</option>
+					<option>Diners Club</option>
+					</select></td></tr>
+					<tr class="newccinfo"><td class="fieldarea">信用卡号码</td><td><input type="text" name="ccnumber" size="30" value="" autocomplete="off" /></td></tr>
+					<tr class="newccinfo"><td class="fieldarea">失效日期</td><td><select name="ccexpirymonth" id="ccexpirymonth"><option>01</option>
+					<option>02</option>
+					<option>03</option>
+					<option>04</option>
+					<option>05</option>
+					<option>06</option>
+					<option>07</option>
+					<option>08</option>
+					<option>09</option>
+					<option>10</option>
+					<option>11</option>
+					<option>12</option>
+					</select> / <select name="ccexpiryyear" class="newccinfo">
+					<option>2015</option>
+					<option>2016</option>
+					<option>2017</option>
+					<option>2018</option>
+					<option>2019</option>
+					<option>2020</option>
+					<option>2021</option>
+					<option>2022</option>
+					<option>2023</option>
+					<option>2024</option>
+					<option>2025</option>
+					<option>2026</option>
+					<option>2027</option>
+					</select></td></tr>
+					<tr><td class="fieldarea">CVV/CVC2 号码</td><td><input type="text" name="cccvv" id="cccvv" value="" size="5" autocomplete="off" /> <a href="#" onclick="window.open('images/ccv.gif','','width=280,height=200,scrollbars=no,top=100,left=100');return false">从哪找到?</a></td></tr>
+					<tr><td class="fieldarea"><input type="checkbox" name="nostore" id="nostore" /></td><td><label for="nostore">如果您不想让我们存储您的信用卡信息以自动续费, 请选择此项</label></td></tr></table>
+					</td></tr></table>
+					</div>
+
+					<p class="cartsubheading">备注/额外信息</p>
+					<p align="center"><textarea name="notes" rows="4" style="width:75%" onFocus="if(this.value=='您可以输入任何您想包含在订单中的额外注释或信息. . .'){this.value='';}" onBlur="if (this.value==''){this.value='您可以输入任何您想包含在订单中的额外注释或信息. . .';}">您可以输入任何您想包含在订单中的额外注释或信息. . .</textarea></p>
+
+					<p align="center"><label><input type="checkbox" name="accepttos" /> 我已经阅读并同意该服务条款 <a href="https://shadowsocks.com/tos.html" target="_blank">服务条款</a></label><p>
+
+					<p align="center"><input type="submit" value="完成订购" onclick="this.value='请稍后. . .'" class="buttongo" /></p>
+
+					<p><img align="left" src="/static/img/padlock.gif" border="0" vspace="5" alt="Secure Transaction" style="padding-right: 10px;" /> 这个订单可以被安全的使用, 以防诈骗, 您的 IP (<strong>202.120.40.97</strong>) 已经记录到日志中.</p>
+
+					</form>
+
+					</div>
+
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{{end}}

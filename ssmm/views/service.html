@@ -1,0 +1,43 @@
+{{template "base/base.html" .}}
+{{define "head"}}{{end}}
+{{define "meta"}}
+<title>{{.Title}} - beego: {{i18n .Lang "app_intro"}}</title>
+<link rel="stylesheet" href="/static/css/cartstyle.css" />
+{{end}}
+{{define "body"}}
+<div class="container main-container">
+	<div class="row">
+		<div class="col-md-12">
+			<div class="box">
+				<div class="cell slim page-box markdown">
+					<div id="order-cart">
+						<h1>
+					    	{{.Title}}
+					    </h1>
+						<div class="cartbox" id="catlinks" align="center">
+							Shadowsocks 帐号 |
+							<a href="/cart.php?a=view">查看购物车</a>
+						</div>
+
+						<br />
+
+						{{range .services}}
+						<div class="cartbox" align="center">
+							<strong>{{.Title}}</strong> <em>({{.Remain}} 可用)</em><br />
+							<br />
+							{{str2html .Description}}
+							<br /><br />
+							<div class="cartpricing">
+							￥{{.Month}} RMB 年付<br />￥{{.Quarter}} RMB 两年<br />￥{{.Year}} RMB 三年<br /></div>
+							<div align="center"><input type="button" value="现在订购" onclick="window.location='/cart/conf/{{.Id}}'" /></div>
+						</div>
+						<br />
+						{{end}}
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{{end}}

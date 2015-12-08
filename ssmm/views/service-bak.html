@@ -1,0 +1,69 @@
+{{template "base/base.html" .}}
+{{define "head"}}{{end}}
+{{define "meta"}}
+<title>{{.Title}} - beego: {{i18n .Lang "app_intro"}}</title>
+<link rel="stylesheet" href="/static/css/cartstyle.css" />
+{{end}}
+{{define "body"}}
+<div class="container main-container">
+	<div class="row">
+		<div class="col-md-12">
+			<div class="box">
+				<div class="cell slim page-box markdown">
+					<div class="page-header" align="center">
+					    <h1>
+					    	{{.Title}}
+					    </h1>
+					</div>
+					<div id="order-cart">
+						<div class="cartbox" id="catlinks" align="center">
+							Shadowsocks 帐号 |
+							<a href="/cart.php?a=view">查看购物车</a>
+						</div>
+
+						<br />
+
+						{{range .services}}
+						<div class="cartbox" align="center">
+							<strong>{{.Title}}</strong> <em>({{.Remain}} 可用)</em><br />
+							<br />
+							{{str2html .Description}}
+							<br /><br />
+							<div class="cartpricing">
+							￥{{.Month}} RMB 年付<br />￥{{.Quarter}} RMB 两年<br />￥{{.Year}} RMB 三年<br /></div>
+							<div align="center"><input type="button" value="现在订购" onclick="window.location='/cart.php?a=add&pid={{.Id}}'" /></div>
+						</div>
+						<br />
+						{{end}}
+
+						<div class="cartbox" align="center">
+							<strong>Shadowsocks.com 普通版第四期</strong> <em>(84 可用)</em><br />
+							<br />3 个美国节点，分别位于 Fremont 和 Los Angeles，高带宽<br /><br />
+							4 个亚洲节点，分别位于新加坡和日本，低延迟<br /><br />
+							不限制流量<br /><br />
+							同一时间同一个账号仅限一个终端使用，如需多个账号请联系销售部门获取优惠。<br /><br /><div class="cartpricing">
+							￥99.00 RMB 年付<br />￥179.00 RMB 两年<br />￥239.00 RMB 三年<br /></div>
+							<div align="center"><input type="button" value="现在订购" onclick="window.location='/cart.php?a=add&pid=5'" /></div>
+						</div>
+						<br />
+						<div class="cartbox" align="center">
+							<strong>Shadowsocks.com 高级版</strong> <em>(30 可用)</em><br />
+							<br />可用所有普通版的节点，另增加 VIP 节点：<br /><br />
+							新加坡 CN2 线路<br /><br />
+							台湾 HiNet 中华电信机房<br /><br />
+							日本东京 GMO 机房<br /><br />
+							日本大阪樱花机房<br /><br />
+							香港 Rackspace 机房<br /><br />
+							不限制流量<br /><br />
+							同一个账号同时支持 5 个终端使用（不支持分享帐号给多人使用），如需更多帐号请联系销售部门获取优惠。<br /><br /><div class="cartpricing">
+							￥399.00 RMB 年付<br />￥599.00 RMB 两年<br />￥799.00 RMB 三年<br /></div>
+							<div align="center"><input type="button" value="现在订购" onclick="window.location='/cart.php?a=add&pid=2'" /></div>
+						</div>
+						<br />
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{{end}}
