@@ -57,7 +57,7 @@ func init() {
 	beego.Router("/user/register", &controllers.WebUserController{}, "get:GetRegister;post:Register")
 	beego.Router("/user/login", &controllers.WebUserController{}, "get:GetLogin;post:Login")
 	beego.Router("/user", &controllers.WebUserController{}, "get:GetHome")
-	beego.Router("/pay", &controllers.PayController{}, "get:BeforePay;post:Pay")
-	beego.Router("/pay/callback", &controllers.PayController{}, "get,post:Callback")
-	beego.Router("/pay/result/:id([0-9]+)", &controllers.PayController{}, "get:PayResult")
+	//beego.Router("/pay", &controllers.PayController{}, "get:BeforePay;post:Pay")
+	beego.Router("/pay/callback", &controllers.PayNowController{}, "get,post:Callback")
+	beego.Router("/pay/result", &controllers.PayNowController{}, "get:PayResult")
 }

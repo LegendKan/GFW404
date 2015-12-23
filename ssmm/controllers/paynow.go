@@ -1,12 +1,16 @@
 package controllers
 import (
     "encoding/json"
-	"net/url"
 	"crypto/md5"
 	"encoding/hex"
     "github.com/astaxie/beego"
     "strconv"
     "time"
+    "sort"
+    "fmt"
+    "ssmm/models"
+    "io/ioutil"
+    "net/http"
 )
 
 type Container struct {
@@ -21,7 +25,7 @@ type RetContainer struct {
     Con    Container `json:"data"`
 }
 
-type PayController struct {
+type PayNowController struct {
     baseController
 }
 
@@ -95,17 +99,17 @@ func createLinkString(params map[string]string)string {
     */
 }
 
-func (c *PayController) PayResult() {
+func (c *PayNowController) PayResult() {
     params:=make(map[string]string)
-    params["funcode"]=this.GetString("funcode")
-    params["appId"]=this.GetString("appId")
-    params["mhtOrderNo"]=this.GetString("mhtOrderNo")
-    params["mhtCharset"]=this.GetString("mhtCharset")
-    params["tradeStatus"]=this.GetString("tradeStatus")
-    params["mhtReserved"]=this.GetString("mhtReserved")
-    params["signType"]=this.GetString("signType")
-    params["signature"]=this.GetString("signature")
-    result:=Verify(params)
+    params["funcode"]=c.GetString("funcode")
+    params["appId"]=c.GetString("appId")
+    params["mhtOrderNo"]=c.GetString("mhtOrderNo")
+    params["mhtCharset"]=c.GetString("mhtCharset")
+    params["tradeStatus"]=c.GetString("tradeStatus")
+    params["mhtReserved"]=c.GetString("mhtReserved")
+    params["signType"]=c.GetString("signType")
+    params["signature"]=c.GetString("signature")
+    result:=Verify(params,beego.AppConfig.String("paynow::securekey"))
     var payresult string
     if result{
         if params["tradeStatus"]=="A001"{
@@ -125,7 +129,7 @@ func (c *PayController) PayResult() {
     c.TplNames = "payresult.html"
 }
 
-func Verify(params map[string]string) bool {
+func Verify(params map[string]string, secret string) bool {
     linked:=createLinkStringforVerify(params)
     h := md5.New()
     h.Write([]byte(secret))
@@ -164,25 +168,31 @@ func createLinkStringforVerify(params map[string]string)string{
     return tmp
 }
 
-func (c *PayController) Callback() {
-    result := c.Ctx.Input.RequestBody
-    fmt.Println("Callback:", string(result))
-    //object := parseNotify(string(result))
-    var charge NotifyCharge
-    err0 := json.Unmarshal(result, &charge)
-    if err0 != nil {
-        fmt.Println(err0)
-        c.Ctx.WriteString("success")
+func (c *PayNowController) Callback() {
+    params:=make(map[string]string)
+    params["funcode"]=c.GetString("funcode")
+    params["appId"]=c.GetString("appId")
+    params["mhtOrderNo"]=c.GetString("mhtOrderNo")
+    params["mhtOrderType"]=c.GetString("mhtOrderType")
+    params["mhtCurrencyType"]=c.GetString("mhtCurrencyType")
+    params["mhtOrderAmt"]=c.GetString("mhtOrderAmt")
+    params["mhtOrderTimeOut"]=c.GetString("mhtOrderTimeOut")
+    params["mhtOrderStartTime"]=c.GetString("mhtOrderStartTime")
+    params["mhtCharset"]=c.GetString("mhtCharset")
+    params["deviceType"]=c.GetString("deviceType")
+    params["payChannelType"]=c.GetString("payChannelType")
+    params["nowPayAccNo"]=c.GetString("nowPayAccNo")
+    params["tradeStatus"]=c.GetString("tradeStatus")
+    params["mhtReserved"]=c.GetString("mhtReserved")
+    params["signType"]=c.GetString("signType")
+    params["signature"]=c.GetString("signature")
+    result:=Verify(params,beego.AppConfig.String("paynow::securekey"))
+    if !result||params["tradeStatus"]!="A001"{
+        c.Ctx.WriteString("success=Y")
         return
     }
-    //charge := object.(pingpp.NotifyCharge)
-    orderId1 := charge.Order_no
-    fmt.Println("OrderID:" + orderId1)
-    //截取orderid
-    //rs := []rune(orderId1)
-    //orderId := string(rs[len(orderId1)-10:])
-    orderId := orderId1[len(orderId1)-10 : len(orderId1)]
-    //orderId := "1422697835"
+
+    orderId := params["mhtOrderNo"]
     fmt.Println("OrderID:" + orderId)
     //通过order获得账单，从账单中获得Account信息，决定是创建还是延时
     var sortby []string
@@ -195,13 +205,13 @@ func (c *PayController) Callback() {
     }
     l, err1 := models.GetAllBill(query, fields, sortby, order, offset, limit)
     if err1 != nil {
-        c.Ctx.WriteString("success")
+        c.Ctx.WriteString("success=N")
         return
     }
     for _, bill := range l {
         //bill := billi.(*models.Bill)
         if bill.Ispaid == 1 {
-            c.Ctx.WriteString("success")
+            c.Ctx.WriteString("success=Y")
             return
         }
         bill.Ispaid = 1
@@ -223,14 +233,14 @@ func (c *PayController) Callback() {
                     //发起get(post)请求去创建
                     con, err := createContainer(ip, port, pass)
                     if err != nil {
-                        fmt.Println("Create Container Error: ", err)
+                        fmt.Println(orderId+"Create Container Error: ", err)
                     } else {
                         account.Active = 1
                         account.Containerid = con.Con.Containerid
                         account.Port, _ = strconv.Atoi(con.Con.Port)
                         account.Password = con.Con.Password
                         //models.UpdateAccountById(account)
-                        server.Remain--
+                        server.Have--
                         models.UpdateServerById(server)
                         fmt.Println("ContainerID: ", con.Con.Containerid)
                     }
@@ -254,7 +264,7 @@ func (c *PayController) Callback() {
             models.UpdateAccountById(account)
         }
     }
-    c.Ctx.WriteString("success")
+    c.Ctx.WriteString("success=Y")
 }
 
 func createContainer(ip string, port int, auth string) (RetContainer, error) {

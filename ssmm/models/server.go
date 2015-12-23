@@ -21,7 +21,7 @@ type Server struct {
 	Quarter     float64 `orm:"column(quarter);null;digits(12);decimals(2)"`
 	Year        float64 `orm:"column(year);null;digits(12);decimals(2)"`
 	Amount      int     `orm:"column(amount);null"`
-	Remain      int     `orm:"column(remain);null"`
+	Have      	int     `orm:"column(have);null"`
 	Isonline    int8    `orm:"column(isonline);null"`
 }
 

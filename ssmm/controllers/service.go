@@ -23,7 +23,7 @@ func (c *ServiceController) GetActive() {
 	var order []string
 	var limit int64 = 100
 	var offset int64 = 0
-	fields := []string{"Id", "Location", "Title", "Description", "Month", "Quarter", "Year", "Remain"}
+	fields := []string{"Id", "Location", "Title", "Description", "Month", "Quarter", "Year", "Amount", "Have"}
 	query := map[string]string{
 		"IsOnline": "1",
 	}
@@ -33,6 +33,7 @@ func (c *ServiceController) GetActive() {
 		//server := s.(models.Server)
 		//tmp := server.Description
 		l[i].Description = strings.Replace(l[0].Description, "|", "<br /><br />", -1)
+		l[i].Have=l[i].Amount-l[i].Have
 		//server.Description = tmp
 		fmt.Println(l[i].Description)
 	}

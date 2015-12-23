@@ -27,7 +27,7 @@ func (c *CartController) ConfService() {
 		c.Abort("404")
 	}
 	server, err := models.GetServerById(b)
-	if err != nil || server.Isonline == 0 || server.Remain <= 0 {
+	if err != nil || server.Isonline == 0 || server.Amount-server.Have <= 0 {
 		c.Abort("404")
 	}
 	server.Description = strings.Replace(server.Description, "|", "<br />", -1)
@@ -60,7 +60,7 @@ func (c *CartController) AddService() {
 	serviceid, _ := c.GetInt("serviceid")
 	cycle := c.GetString("billingcycle")
 	server, err := models.GetServerById(serviceid)
-	if err != nil || server.Isonline == 0 || server.Remain <= 0 {
+	if err != nil || server.Isonline == 0 || server.Amount-server.Have <= 0 {
 		c.Abort("404")
 	}
 	var cycletype int8
