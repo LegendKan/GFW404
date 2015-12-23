@@ -1,0 +1,31 @@
+{{template "base/base.html" .}}
+{{define "head"}}{{end}}
+{{define "meta"}}
+<title>{{.Title}} - beego: {{i18n .Lang "app_intro"}}</title>
+<link rel="stylesheet" href="/static/css/cartstyle.css" />
+{{end}}
+{{define "body"}}
+<div class="container main-container">
+	<div class="row">
+		<div class="col-md-12">
+			<div class="box">
+				<div class="cell slim page-box">
+					<div id="order-cart">
+
+						<h1>在线支付</h1>
+
+						<h2>您应该支付 <strong>￥{{.total}}RMB</strong></h2>
+						<form action="http://api.ipaynow.cn" METHOD=POST>
+						{{range $k,$v:=.params}}
+						<input type="hidden" name="{{$k}}" value="{{$v}}" />
+						{{end}}
+						
+						<p align="center"><input type="submit" id="sub" value="立即支付" /></p>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{{end}}

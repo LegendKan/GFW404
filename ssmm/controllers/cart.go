@@ -188,14 +188,18 @@ func (c *CartController) PlaceOrder() {
 	billingids = strconv.FormatInt(time.Now().Unix(), 10)
 	timenow := time.Now()
 	var exprietime time.Time
+	var cyclestr string
 	for _, item := range itemss {
 		//创建服务和账单
 		if item.Cycle == 1 {
 			exprietime = timenow.AddDate(0, 1, 0)
+			cyclestr="月付"
 		} else if item.Cycle == 2 {
 			exprietime = timenow.AddDate(0, 3, 0)
+			cyclestr="季付"
 		} else {
 			exprietime = timenow.AddDate(1, 0, 0)
+			cyclestr="年付"
 		}
 		account := &models.Account{Serverid: item.Server, Userid: &models.User{Id: userid}, Cycle: item.Cycle, Expiretime: exprietime}
 		aid, err := models.AddAccount(account)
@@ -226,5 +230,12 @@ func (c *CartController) PlaceOrder() {
 	flash.Data["total"] = strconv.FormatFloat(total, 'e', 2, 32)
 	flash.Store(&c.Controller)
 	//flash.Set("total", total)
-	c.TplNames = "payonline.html"
+	//old for pingpp
+	//c.TplNames = "payonline.html"
+	fmt.Println("I am here Catch me")
+	//ipaynow.cn paynow支付
+	params:=CreatePay(total,billingids,cyclestr+"Shadowsocks账号")
+	c.Data["params"] = params
+	c.TplNames = "paynow.html"
+	
 }

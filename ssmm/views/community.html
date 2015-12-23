@@ -72,7 +72,7 @@
 				    	Beego is a powerful framework for many different use cases. Here are some great early use cases for beego, as described by members of our community.
 				    </p>
 				    {{.Data | str2html}}
-				    <a href="https://github.com/beego/beedoc/blob/master/{{..Lang}}/{{.Section}}.md" class="pull-right btn btn-success" target="_blank">{{i18n .Lang "add use case"}}</a>
+				    <a href="https://github.com/beego/beedoc/blob/master/{{.Lang}}/{{.Section}}.md" class="pull-right btn btn-success" target="_blank">{{i18n .Lang "add use case"}}</a>
 
 					{{else if eq .Lang "zh-CN"}}
 
@@ -134,7 +134,7 @@
 				    	Beego 是一个适于多种开发目标的强大的应用框架，这里有一份公开项目的清单，用于展示这些应用程序将 beego 用作何种开发。
 				    </p>
 				    {{.Data | str2html}}
-				    <a href="https://github.com/beego/beedoc/blob/master/{{..Lang}}/{{.Section}}.md" class="pull-right btn btn-success" target="_blank">{{i18n .Lang "add use case"}}</a>
+				    <a href="https://github.com/beego/beedoc/blob/master/{{.Lang}}/{{.Section}}.md" class="pull-right btn btn-success" target="_blank">{{i18n .Lang "add use case"}}</a>
 
 					{{end}}
 

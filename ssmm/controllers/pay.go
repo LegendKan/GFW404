@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"github.com/astaxie/beego"
 	"github.com/pingplusplus/pingpp-go/pingpp"
+	"github.com/pingplusplus/pingpp-go/pingpp/charge"
+	"log"
 	"io/ioutil"
 	"net/http"
 	"ssmm/models"
@@ -55,6 +57,18 @@ type PayController struct {
 	baseController
 }
 
+//new version pingpp
+func init() {
+	// LogLevel 是 Go SDK 提供的 debug 开关
+	pingpp.LogLevel = 2
+	//设置 API Key
+	pingpp.Key = "sk_test_jfbXD480KubTSOi1O0OW5SSC"
+	//获取 SDK 版本
+	fmt.Println("Go SDK Version:", pingpp.Version())
+	//设置错误信息语言，默认是中文
+	pingpp.AcceptLanguage = "zh-CN"
+}
+
 func (c *PayController) Pay() {
 	flash := beego.ReadFromRequest(&c.Controller)
 	billing := flash.Data["billing"]
@@ -66,6 +80,38 @@ func (c *PayController) Pay() {
 	}
 	total, _ := strconv.ParseFloat(amount, 64)
 	total = 100 * total
+
+	//new version pingpp
+	metadata := make(map[string]interface{})
+	metadata["color"] = "red"
+	//extra 参数根据渠道不同有区别，下面注释的是一部分的示例
+	extra := make(map[string]interface{})
+	//upacp_wap
+	extra["result_url"] = "http://www.gfw404.com:8080/pay/result/"
+	params := &pingpp.ChargeParams{
+		Order_no:  billing,
+		App:       pingpp.App{Id: "app_vPu5yTeLaDa1jfT8"},
+		Amount:    uint64(total),
+		Channel:   "upacp_pc",
+		Currency:  "cny",
+		Client_ip: "127.0.0.1",
+		Subject:   "ShadowSocks 账号",
+		Body:      "ShadowSocks 账号 付款",
+		Extra:     extra,
+		Metadata:  metadata,
+	}
+	//返回的第一个参数是 charge 对象，你需要将其转换成 json 给客户端，或者客户端接收后转换。
+	ch, err := charge.New(params)
+	if err != nil {
+		errs, _ := json.Marshal(err)
+		fmt.Println(string(errs))
+		log.Fatal(err)
+		return
+	}
+	fmt.Println(ch)
+	c.Data["json"] = ch
+	c.ServeJson()
+	/**old version
 	// var jsonstring string
 	// jsonstring = `{"order_no": "123456789011122233", "extra":{"result_url":"http://example.com/example/"}, "amount": 1,"app": {"id":"app_vPu5yTeLaDa1jfT8"},"channel": "upmp_wap","currency": "cny","client_ip": "192.168.1.1","subject": "test-subject","body": "test-body","metadata": {"color": "red"}}`
 	var chargeParams pingpp.ChargeParams
@@ -87,6 +133,7 @@ func (c *PayController) Pay() {
 	fmt.Printf("%v", charge)
 	c.Data["json"] = charge
 	c.ServeJson()
+	*/
 }
 
 func (c *PayController) BeforePay() {

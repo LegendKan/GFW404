@@ -13,11 +13,9 @@
 					<div id="order-cart">
 
 						<h1>支付结果</h1>
-						{{if eq .payresult "0"}}
-						<h2>恭喜您支付成功.</h2>
-						{{else}}
-						<h2>您的支付未能成功！</h2>
-						{{end}}
+						
+						<h2>{{.payresult}}</h2>
+						
 						<p><a href="/user">回到用户中心</a></p>
 
 					</div>
