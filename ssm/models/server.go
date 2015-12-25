@@ -7,5 +7,5 @@ type Server struct {
 	Location    string
 	Description string
 	Amount      int
-	Remain      int
+	Have      	int
 }

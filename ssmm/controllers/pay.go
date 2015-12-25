@@ -212,7 +212,7 @@ func (c *PayController) Callback() {
 						account.Port, _ = strconv.Atoi(con.Con.Port)
 						account.Password = con.Con.Password
 						//models.UpdateAccountById(account)
-						server.Remain--
+						server.Have++
 						models.UpdateServerById(server)
 						fmt.Println("ContainerID: ", con.Con.Containerid)
 					}

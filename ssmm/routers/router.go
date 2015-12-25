@@ -60,4 +60,6 @@ func init() {
 	//beego.Router("/pay", &controllers.PayController{}, "get:BeforePay;post:Pay")
 	beego.Router("/pay/callback", &controllers.PayNowController{}, "get,post:Callback")
 	beego.Router("/pay/result", &controllers.PayNowController{}, "get:PayResult")
+
+	beego.NSRouter("/api/server", &controllers.ServerController{}, "post:Post")
 }

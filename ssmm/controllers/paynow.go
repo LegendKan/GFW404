@@ -8,6 +8,7 @@ import (
     "time"
     "sort"
     "fmt"
+    "net/url"
     "ssmm/models"
     "io/ioutil"
     "net/http"
@@ -32,7 +33,8 @@ type PayNowController struct {
 func CreatePay(amt float64, orderid string, des string) map[string]string {
     params:=make(map[string]string)
     params["mhtOrderName"]="gfw404.com Shadowsocks账号"
-    orderamt:=int(amt*100)
+    //orderamt:=int(amt*100)
+    orderamt:=10
     params["mhtOrderAmt"]=strconv.Itoa(orderamt)
     params["mhtOrderDetail"]=des
     params["funcode"]="WP001"
@@ -106,6 +108,7 @@ func (c *PayNowController) PayResult() {
     params["mhtOrderNo"]=c.GetString("mhtOrderNo")
     params["mhtCharset"]=c.GetString("mhtCharset")
     params["tradeStatus"]=c.GetString("tradeStatus")
+    params["transStatus"]=c.GetString("transStatus")
     params["mhtReserved"]=c.GetString("mhtReserved")
     params["signType"]=c.GetString("signType")
     params["signature"]=c.GetString("signature")
@@ -138,6 +141,8 @@ func Verify(params map[string]string, secret string) bool {
     h2:= md5.New()
     h2.Write([]byte(linked))
     target:=hex.EncodeToString(h2.Sum(nil))
+    fmt.Println(target)
+    fmt.Println(params["signature"])
     if params["signature"]!=""&&params["signature"]==target{
         return true
     }else{
@@ -165,27 +170,31 @@ func createLinkStringforVerify(params map[string]string)string{
             tmp=tmp+"&"+k+"="+params[k]
         }
     }
+    fmt.Println(tmp)
     return tmp
 }
 
 func (c *PayNowController) Callback() {
+    v,_:=url.ParseQuery(string(c.Ctx.Input.RequestBody))
     params:=make(map[string]string)
-    params["funcode"]=c.GetString("funcode")
-    params["appId"]=c.GetString("appId")
-    params["mhtOrderNo"]=c.GetString("mhtOrderNo")
-    params["mhtOrderType"]=c.GetString("mhtOrderType")
-    params["mhtCurrencyType"]=c.GetString("mhtCurrencyType")
-    params["mhtOrderAmt"]=c.GetString("mhtOrderAmt")
-    params["mhtOrderTimeOut"]=c.GetString("mhtOrderTimeOut")
-    params["mhtOrderStartTime"]=c.GetString("mhtOrderStartTime")
-    params["mhtCharset"]=c.GetString("mhtCharset")
-    params["deviceType"]=c.GetString("deviceType")
-    params["payChannelType"]=c.GetString("payChannelType")
-    params["nowPayAccNo"]=c.GetString("nowPayAccNo")
-    params["tradeStatus"]=c.GetString("tradeStatus")
-    params["mhtReserved"]=c.GetString("mhtReserved")
-    params["signType"]=c.GetString("signType")
-    params["signature"]=c.GetString("signature")
+    params["funcode"]=v.Get("funcode")
+    params["appId"]=v.Get("appId")
+    params["channelOrderNo"]=v.Get("channelOrderNo")
+    params["mhtOrderNo"]=v.Get("mhtOrderNo")
+    params["mhtOrderType"]=v.Get("mhtOrderType")
+    params["mhtCurrencyType"]=v.Get("mhtCurrencyType")
+    params["mhtOrderAmt"]=v.Get("mhtOrderAmt")
+    params["mhtOrderName"]=v.Get("mhtOrderName")
+    params["mhtOrderTimeOut"]=v.Get("mhtOrderTimeOut")
+    params["mhtOrderStartTime"]=v.Get("mhtOrderStartTime")
+    params["mhtCharset"]=v.Get("mhtCharset")
+    params["deviceType"]=v.Get("deviceType")
+    params["payChannelType"]=v.Get("payChannelType")
+    params["nowPayOrderNo"]=v.Get("nowPayOrderNo")
+    params["tradeStatus"]=v.Get("tradeStatus")
+    params["mhtReserved"]=v.Get("mhtReserved")
+    params["signType"]=v.Get("signType")
+    params["signature"]=v.Get("signature")
     result:=Verify(params,beego.AppConfig.String("paynow::securekey"))
     if !result||params["tradeStatus"]!="A001"{
         c.Ctx.WriteString("success=Y")
