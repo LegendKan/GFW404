@@ -26,9 +26,9 @@ func main() {
 func contactMaster() bool {
 	masterport, _ := beego.AppConfig.Int("httpport")
 	amount, _ := beego.AppConfig.Int("amount")
-	remain, _ := beego.AppConfig.Int("remain")
+	have, _ := beego.AppConfig.Int("have")
 	var server = models.Server{beego.AppConfig.String("server"), masterport, beego.AppConfig.String("passauth"), beego.AppConfig.String("location"),
-		beego.AppConfig.String("description"), amount, remain}
+		beego.AppConfig.String("description"), amount, have}
 	b, err := json.Marshal(server)
 	if err != nil {
 		fmt.Println("json err:", err)
@@ -41,6 +41,8 @@ func contactMaster() bool {
 		return false
 	}
 	if res.StatusCode == 200 {
+		//处理已经创建的，进行恢复
+
 		return true
 	}
 

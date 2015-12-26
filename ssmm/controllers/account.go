@@ -23,6 +23,44 @@ func (c *AccountController) URLMapping() {
 	c.Mapping("Delete", c.Delete)
 }
 
+//update
+func (c *AccountController) Update() {
+	id:=c.GetInt("id")
+	containerid:=c.GetString("containerid")
+	port:=c.GetInt("port")
+	ip:=c.GetString("ip")
+	password:=c.GetString("password")
+	auth:=c.GetString("auth")
+
+	var sortby []string
+    var order []string
+    var limit int64 = 10000
+    var offset int64 = 0
+	fields := []string{"Id", "Auth"}
+    query := map[string]string{
+        "Ip": ip,
+    }
+    server,err:=models.GetAllServer(query, fields, sortby, order, offset, limit)
+    if err!=nil{
+    	c.Abort("500")
+    }
+    if len(server)==0{
+    	c.Abort("404")
+    }else if auth==server[0].Auth{
+    	var v models.Account
+    	v.Id=id
+    	v.Containerid=containerid
+    	v.Port=port
+    	v.Password=password
+    	models.UpdateAccountById(&v)
+    	c.Data["json"]="OK"
+    }else{
+    	c.Abort("403")
+    }
+	
+	c.ServeJson()
+}
+
 // @Title Post
 // @Description create Account
 // @Param	body		body 	models.Account	true		"body for Account content"

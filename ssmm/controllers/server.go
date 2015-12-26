@@ -32,11 +32,51 @@ func (c *ServerController) URLMapping() {
 func (c *ServerController) Post() {
 	var v models.Server
 	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
-	if id, err := models.AddServer(&v); err == nil {
-		c.Data["json"] = map[string]int64{"id": id}
-	} else {
-		c.Data["json"] = err.Error()
-	}
+	//查询该IP的服务器是否已经存在了，如果存在则验证密码，对则返回现在该服务器上的容器
+	var sortby []string
+    var order []string
+    var limit int64 = 10000
+    var offset int64 = 0
+	fields := []string{"Id", "Auth"}
+    query := map[string]string{
+        "Ip": v.Ip,
+    }
+    server,err:=models.GetAllServer(query, fields, sortby, order, offset, limit)
+    if err!=nil{
+    	c.Abort("500")
+    }
+    if len(server)==0{
+    	if id, err := models.AddServer(&v); err == nil {
+			c.Data["json"] = ""
+		} else {
+			c.Abort("500")
+		}
+    }else if v.Auth==server[0].Auth{
+    	//获取现在active的容器
+    	fields1 := []string{"Id", "Containerid", "Port", "Password", "Auth"}
+	    query1 := map[string]string{
+	        "Serverid": server[0].Id,
+	        "Active":1,
+	    }
+	    accounts,err:=models.GetAllAccount(query1, fields1, sortby, order, offset, limit)
+	    if err!=nil{
+	    	c.Abort("500")
+	    }
+	    simples:=make([]SimpleAccount, 5)
+	    for i, single:= range accounts{
+	    	simples[i].Containerid=single.Containerid
+	    	simples[i].Password=single.Password
+	    	simples[i].Port=single.Port
+	    	simples[i].Id=single.Id
+	    }
+	    c.Data["json"]=simples
+    }else{
+    	//update server
+    	v.Id=server[0].Id
+    	models.UpdateServerById(&v)
+    	c.Data["json"] = ""
+    }
+	
 	c.ServeJson()
 }
 

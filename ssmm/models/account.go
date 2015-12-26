@@ -23,6 +23,13 @@ type Account struct {
 	Active      int8      `orm:"column(active)"`
 }
 
+type SimpleAccount struct {
+	Id              int
+	Containerid     string
+	Port        	int
+	Password        string
+}
+
 func init() {
 	orm.RegisterModel(new(Account))
 }
