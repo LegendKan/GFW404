@@ -3,6 +3,8 @@ package controllers
 import (
 	"encoding/json"
 	"ssm/controllers/unixsocket"
+	"fmt"
+	"ssm/models"
 )
 
 var baseDocker string
@@ -91,10 +93,18 @@ func DeleteContainer(id string) bool {
 	return false
 }
 
-func ListContainers() string {
+func ListContainers() []Container, bool {
 	url := baseDocker + "/containers/json?all=1"
-	_, result := unixsocket.UnixSocket("GET", url, "")
-	return result
+	statusCode, result := unixsocket.UnixSocket("GET", url, "")
+	if statusCode ==200{
+		fmt.Println(result)
+		containers := make([]Container,0)
+		if err:=json.Unmarshal(result, &containers);err!=nil{
+			return nil, false
+		}
+		return containers
+	}
+	return nil, false
 }
 
 func DisplaySysInfo() string {
