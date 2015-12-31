@@ -3,6 +3,7 @@ package models
 type Container struct{
 	Id		string
 	Name	[]string
+	Image	string
 	Status	string
 	Ports	[]Port
 }

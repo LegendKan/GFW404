@@ -5,6 +5,7 @@ import (
 	"ssm/controllers/unixsocket"
 	"fmt"
 	"ssm/models"
+	"net/http"
 )
 
 var baseDocker string
@@ -93,18 +94,49 @@ func DeleteContainer(id string) bool {
 	return false
 }
 
-func ListContainers() []Container, bool {
+func ListContainers() ([]models.Container, bool) {
 	url := baseDocker + "/containers/json?all=1"
 	statusCode, result := unixsocket.UnixSocket("GET", url, "")
 	if statusCode ==200{
 		fmt.Println(result)
-		containers := make([]Container,0)
-		if err:=json.Unmarshal(result, &containers);err!=nil{
+		containers := make([]models.Container,0)
+		if err:=json.Unmarshal([]byte(result), &containers);err!=nil{
 			return nil, false
 		}
-		return containers
+		sscs:=make([]models.Container,len(containers))
+		for _,v := range containers{
+			if v.Image==baseImage{
+				sscs=append(sscs, v)
+			}
+		}
+		return sscs, true
 	}
 	return nil, false
+}
+
+func SyncContainers(accounts []models.Account) bool{
+	containers:=ListContainers()
+	var has bool
+	for _, v:=range accounts{
+		has=false
+		for _, con:=range containers{
+			if con.Id==v.Containerid{
+				has=true
+				if strings.Contains(con.Status, "created")||strings.Contains(con.Status, "paused")||strings.Contains(con.Status, "exited"){
+					//start container
+					if !StartContainer(con.Id){
+						has=false
+					}
+				}
+				break
+			}
+		}
+		if !has{
+			//创建新的容器，并发送到服务器
+			resp, err := http.Get("http://example.com/")
+		}
+	}
+	return false
 }
 
 func DisplaySysInfo() string {

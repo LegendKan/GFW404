@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"github.com/astaxie/beego"
 	"log"
@@ -13,13 +12,15 @@ import (
 )
 
 func main() {
+	/*"errors"
 	var myhook = func() error {
 		if contactMaster() {
 			return nil
 		}
 		return errors.New("Test")
 	}
-	beego.AddAPPStartHook(myhook)
+	*/
+	//beego.AddAPPStartHook(myhook)
 	beego.Run()
 }
 
