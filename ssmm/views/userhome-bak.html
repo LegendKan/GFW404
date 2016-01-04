@@ -1,0 +1,110 @@
+{{template "base/base.html" .}}
+{{define "head"}}{{end}}
+{{define "meta"}}
+<title>{{.Title}} - beego: {{i18n .Lang "app_intro"}}</title>
+<link rel="stylesheet" href="/static/css/cartstyle.css" />
+<script type="text/javascript" src="/static/js/jquery-1.11.2.min.js"></script>
+{{end}}
+{{define "body"}}
+<div class="container main-container">
+	<div class="row">
+		<div class="col-md-12">
+			<div class="box">
+				<div class="cell slim page-box">
+					<div id="order-cart">
+
+						<h1>用户中心</h1>
+						<p>欢迎您：<strong>用户</strong> 点击这里退出登录</p>
+						<p class="cartsubheading">产品/服务</p>
+						<table class="table table-striped table-framed" style="text-align: center;border: 1px solid #dddddd;">
+						    <thead>
+						        <tr>
+						            <th><a href="clientarea.php?action=products&orderby=product">产品</a></th>
+						            <th><a href="clientarea.php?action=products&orderby=price">价格</a></th>
+						            <th><a href="clientarea.php?action=products&orderby=billingcycle">付款周期</a></th>
+						            <th><a href="clientarea.php?action=products&orderby=nextduedate">下次付款</a></th>
+						            <th><a href="clientarea.php?action=products&orderby=status">状态</a></th>
+						            <th>&nbsp;</th>
+						        </tr>
+						    </thead>
+						    <tbody>
+						        <tr>
+						            <td><strong>VM Specials - Special-512MB</strong><br /><a href="http://server" target="_blank">server</a></td>
+						            <td>$6.00 USD</td>
+						            <td>Annually</td>
+						            <td>17/12/2015</td>
+						            <td><span class="label active">Active</span></td>
+						            <td>
+						                <div class="btn-group">
+						                <a class="btn" href="clientarea.php?action=productdetails&id=32"> <i class="icon icon-list-alt"></i> View Details</a>
+						                <a class="btn dropdown-toggle" href="#" data-toggle="dropdown"><span class="caret"></span></a>
+						                <ul class="dropdown-menu">
+						                     <li><a href="clientarea.php?action=cancel&id=32"><i class="icon-off"></i> Request Cancellation</a></li>
+						                </ul>
+						                </div>
+						            </td>
+						        </tr>
+						        <!--<tr><td colspan="6" class="textcenter">There are currently no open support tickets</td></tr> -->
+						    </tbody>
+						</table>
+						<p class="cartsubheading">账单</p>
+						<script type="text/javascript">
+						function toggleCheckboxes(classname) {
+						    jQuery("."+classname).prop('checked',!jQuery("."+classname+":first").prop('checked'));
+						    //alert("hello");
+						}
+						</script>
+						<form method="post" action="clientarea.php?action=masspay">
+						<input type="hidden" name="token" value="ff476030e2dfc0d9ecd387996aa961d815f8eed7" />
+
+						<table class="table table-striped table-framed table-centered" style="text-align: center;border: 1px solid #dddddd;">
+						    <thead>
+						        <tr>
+						            <th class="textcenter"><input type="checkbox" onclick="toggleCheckboxes('invids')" /></th>            <th><a href="clientarea.php?action=invoices&orderby=id">账单号</a></th>
+						            <th><a href="clientarea.php?action=invoices&orderby=date">生成日期</a></th>
+						            <th><a href="clientarea.php?action=invoices&orderby=duedate">到期日</a></th>
+						            <th><a href="clientarea.php?action=invoices&orderby=total">总计</a></th>
+						            <th><a href="clientarea.php?action=invoices&orderby=balance">应付</a></th>
+						            <th><a href="clientarea.php?action=invoices&orderby=status">状态</a></th>
+						            <th>&nbsp;</th>
+						        </tr>
+						    </thead>
+						    <tbody>
+						        <tr>
+						            <td><input type="checkbox" name="invoiceids[]" value="932" class="invids" /></td>            
+						            <td><a href="viewinvoice.php?id=932" target="_blank">932</a></td>
+						            <td>01/21/2015</td>
+						            <td>02/04/2015</td>
+						            <td>$3.50 USD</td>
+						            <td>$3.50 USD</td>
+						            <td><span class="label unpaid">Unpaid</span></td>
+						            <td class="textcenter"><a href="viewinvoice.php?id=932" target="_blank" class="btn">View Invoice</a></td>
+						        </tr>
+						        <tr>
+						            <td><input type="checkbox" name="invoiceids[]" value="900" class="invids" /></td>            
+						            <td><a href="viewinvoice.php?id=900" target="_blank">900</a></td>
+						            <td>01/15/2015</td>
+						            <td>01/29/2015</td>
+						            <td>$3.25 USD</td>
+						            <td>$3.25 USD</td>
+						            <td><span class="label unpaid">Unpaid</span></td>
+						            <td class="textcenter"><a href="viewinvoice.php?id=900" target="_blank" class="btn">View Invoice</a></td>
+						        </tr>
+						        <tr>
+						            <td colspan="4"><div align="left"><input type="submit" value="Pay Selected" class="btn" /> <a href="clientarea.php?action=masspay&all=true" class="btn" style="margin-top: 7px; background: #5bb75b;"><i class="icon-ok-circle icon-white"></i> Pay All</a></div></td>
+						            <td class="textright"><strong>Total Due</strong></td>
+						            <td><strong>$6.75 USD</strong></td>
+						            <td colspan="2">&nbsp;</td>
+						        </tr>
+						        <!-- <tr> <td colspan="8" class="textcenter">There are currently no unpaid invoices</td> </tr>-->
+						    </tbody>
+						</table>
+
+						</form>						
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{{end}}

@@ -33,8 +33,8 @@ type PayNowController struct {
 func CreatePay(amt float64, orderid string, des string) map[string]string {
     params:=make(map[string]string)
     params["mhtOrderName"]="gfw404.com Shadowsocks账号"
-    //orderamt:=int(amt*100)
-    orderamt:=10
+    orderamt:=int(amt*100)
+    //orderamt:=10
     params["mhtOrderAmt"]=strconv.Itoa(orderamt)
     params["mhtOrderDetail"]=des
     params["funcode"]="WP001"
@@ -208,7 +208,7 @@ func (c *PayNowController) Callback() {
     var order []string
     var limit int64 = 100
     var offset int64 = 0
-    fields := []string{"Id", "Accountid", "Ispaid"}
+    fields := []string{"Id", "Accountid", "Price", "Createtime", "Expiretime", "Ispaid", "Payno"}
     query := map[string]string{
         "Payno": orderId,
     }
@@ -221,7 +221,7 @@ func (c *PayNowController) Callback() {
         //bill := billi.(*models.Bill)
         if bill.Ispaid == 1 {
             c.Ctx.WriteString("success=Y")
-            return
+            continue
         }
         bill.Ispaid = 1
         models.UpdateBillById(&bill)
@@ -241,6 +241,7 @@ func (c *PayNowController) Callback() {
                     pass := server.Auth
                     //发起get(post)请求去创建
                     con, err := createContainer(ip, port, pass)
+                    //mt.Println(con)
                     if err != nil {
                         fmt.Println(orderId+"Create Container Error: ", err)
                     } else {
@@ -248,8 +249,8 @@ func (c *PayNowController) Callback() {
                         account.Containerid = con.Con.Containerid
                         account.Port, _ = strconv.Atoi(con.Con.Port)
                         account.Password = con.Con.Password
-                        //models.UpdateAccountById(account)
-                        server.Have--
+                        models.UpdateAccountById(account)
+                        server.Have++
                         models.UpdateServerById(server)
                         fmt.Println("ContainerID: ", con.Con.Containerid)
                     }
@@ -278,7 +279,7 @@ func (c *PayNowController) Callback() {
 
 func createContainer(ip string, port int, auth string) (RetContainer, error) {
     var con RetContainer
-    resp, err := http.Get("http://" + ip + ":" + strconv.Itoa(port) + "/add")
+    resp, err := http.Get("http://" + ip + ":" + strconv.Itoa(port) + "/docker/add?auth="+auth)
     if err != nil {
         return con, err
     }

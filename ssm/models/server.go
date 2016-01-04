@@ -5,6 +5,7 @@ type Server struct {
 	Port        int
 	Auth        string
 	Location    string
+	Title		string
 	Description string
 	Amount      int
 	Have      	int

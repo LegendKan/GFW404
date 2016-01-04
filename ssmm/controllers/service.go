@@ -32,7 +32,7 @@ func (c *ServiceController) GetActive() {
 	for i := 0; i < len(l); i++ {
 		//server := s.(models.Server)
 		//tmp := server.Description
-		l[i].Description = strings.Replace(l[0].Description, "|", "<br /><br />", -1)
+		l[i].Description = strings.Replace(l[i].Description, "|", "<br /><br />", -1)
 		l[i].Have=l[i].Amount-l[i].Have
 		//server.Description = tmp
 		fmt.Println(l[i].Description)

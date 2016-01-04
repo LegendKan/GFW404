@@ -6,6 +6,10 @@ import (
 	"fmt"
 	"ssm/models"
 	"net/http"
+	"strings"
+	"net/url"
+	"github.com/astaxie/beego"
+	"strconv"
 )
 
 var baseDocker string
@@ -115,14 +119,22 @@ func ListContainers() ([]models.Container, bool) {
 }
 
 func SyncContainers(accounts []models.Account) bool{
-	containers:=ListContainers()
+	fmt.Println("Start to Sync")
+	containers, result:=ListContainers()
+	if !result{
+		return false
+	}
 	var has bool
 	for _, v:=range accounts{
 		has=false
+		if v.Port>=MaxPort{
+			MaxPort=v.Port+1
+		}
+		fmt.Println(MaxPort)
 		for _, con:=range containers{
 			if con.Id==v.Containerid{
 				has=true
-				if strings.Contains(con.Status, "created")||strings.Contains(con.Status, "paused")||strings.Contains(con.Status, "exited"){
+				if strings.Contains(con.Status, "Created")||strings.Contains(con.Status, "Paused")||strings.Contains(con.Status, "Exited"){
 					//start container
 					if !StartContainer(con.Id){
 						has=false
@@ -133,10 +145,30 @@ func SyncContainers(accounts []models.Account) bool{
 		}
 		if !has{
 			//创建新的容器，并发送到服务器
-			resp, err := http.Get("http://example.com/")
+			id,ret:=AddContainer(strconv.Itoa(v.Port), v.Password)
+			if ret{
+				r:=StartContainer(id)
+				if r {
+					form := url.Values{}
+					form.Add("id", strconv.Itoa(v.Id))
+					form.Add("containerid", id)
+					form.Add("port", strconv.Itoa(v.Port))
+					form.Add("ip", beego.AppConfig.String("server"))
+					form.Add("auth", beego.AppConfig.String("passauth"))
+					//resp, err := http.Get("http://"+beego.AppConfig.String("masteraddr")+":"+beego.AppConfig.String("masterport")+"/api/server")
+					resp, err :=http.PostForm("http://"+beego.AppConfig.String("masteraddr")+":"+beego.AppConfig.String("masterport")+"/api/updateacc", form)
+					if err!=nil||resp.StatusCode != 200{
+						fmt.Println("Have created "+strconv.Itoa(v.Id)+"："+id+" but fail to update the server")
+					}
+				}else{
+					fmt.Println("Fail to start"+strconv.Itoa(v.Id)+"："+id)
+				}
+			}else{
+				fmt.Println("Fail to create "+strconv.Itoa(v.Id))
+			}
 		}
 	}
-	return false
+	return true
 }
 
 func DisplaySysInfo() string {

@@ -10,10 +10,21 @@ import (
 )
 
 type User struct {
-	Id       int    `orm:"column(id);auto"`
-	Username string `orm:"column(username);size(255)"`
-	Password string `orm:"column(password);size(255)"`
-	Email    string `orm:"column(email);size(255);null"`
+	Id          int    `orm:"column(id);auto"`
+	Username    string `orm:"column(username);size(255)"`
+	Password    string `orm:"column(password);size(255)"`
+	Email       string `orm:"column(email);size(255);null"`
+	Firstname   string `orm:"column(firstname);size(32);null"`
+	Lastname    string `orm:"column(lastname);size(32);null"`
+	Company     string `orm:"column(company);size(32);null"`
+	Address1    string `orm:"column(address1);size(64);null"`
+	Address2    string `orm:"column(address2);size(64);null"`
+	City        string `orm:"column(city);size(64);null"`
+	Province    string `orm:"column(province);size(64);null"`
+	Zipcode     string `orm:"column(zipcode);size(32);null"`
+	Country     string `orm:"column(country);size(32);null"`
+	Mobile      string `orm:"column(mobile);size(64);null"`
+	Issubscribe int8   `orm:"column(issubscribe)"`
 }
 
 func init() {
@@ -49,6 +60,7 @@ func GetUserByEmail(email string) (v *User, err error) {
 	}
 	return nil, err
 }
+
 
 // GetAllUser retrieves all User matches certain condition. Returns empty list if
 // no records exist

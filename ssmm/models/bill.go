@@ -116,6 +116,16 @@ func GetAllBill(query map[string]string, fields []string, sortby []string, order
 	return nil, err
 }
 
+func GetAllUnpaidBills(uid string) ([]orm.Params, error) {
+	var maps []orm.Params
+	o := orm.NewOrm()
+	_, err := o.Raw("SELECT bill.id, bill.accountid, bill.price, bill.createtime, bill.expiretime FROM account,bill WHERE account.userid = ? and bill.accountid=account.id and TO_DAYS(NOW()) - TO_DAYS(bill.expiretime) <= 5 and bill.ispaid=0 order by bill.id desc", uid).Values(&maps)
+	if err!=nil {
+		return nil,err
+	}
+	return maps,nil
+}
+
 // UpdateBill updates Bill by Id and returns error if
 // the record to be updated doesn't exist
 func UpdateBillById(m *Bill) (err error) {

@@ -6,7 +6,7 @@ import (
 	"ssmm/models"
 	"strconv"
 	"strings"
-
+"fmt"
 	"github.com/astaxie/beego"
 )
 
@@ -41,38 +41,45 @@ func (c *ServerController) Post() {
     query := map[string]string{
         "Ip": v.Ip,
     }
-    server,err:=models.GetAllServer(query, fields, sortby, order, offset, limit)
+    server,err:=models.GetAllActiveServer(query, fields, sortby, order, offset, limit)
     if err!=nil{
     	c.Abort("500")
     }
     if len(server)==0{
-    	if id, err := models.AddServer(&v); err == nil {
-			c.Data["json"] = ""
+    	if _, err := models.AddServer(&v); err == nil {
+			c.Data["json"] = "OK"
 		} else {
 			c.Abort("500")
 		}
     }else if v.Auth==server[0].Auth{
     	//获取现在active的容器
-    	fields1 := []string{"Id", "Containerid", "Port", "Password", "Auth"}
+    	fields1 := []string{"Id", "Containerid", "Port", "Password"}
 	    query1 := map[string]string{
-	        "Serverid": server[0].Id,
-	        "Active":1,
+	        "Serverid": strconv.Itoa(server[0].Id),
+	        "Active":"1",
 	    }
-	    accounts,err:=models.GetAllAccount(query1, fields1, sortby, order, offset, limit)
+	    accounts,err:=models.GetAllActiveAccount(query1, fields1, sortby, order, offset, limit)
 	    if err!=nil{
 	    	c.Abort("500")
 	    }
-	    simples:=make([]SimpleAccount, 5)
-	    for i, single:= range accounts{
-	    	simples[i].Containerid=single.Containerid
-	    	simples[i].Password=single.Password
-	    	simples[i].Port=single.Port
-	    	simples[i].Id=single.Id
+
+	    simples:=make([]models.SimpleAccount, 0)
+	    for _, single:= range accounts{
+	    	var tmp models.SimpleAccount
+	    	tmp.Containerid=single.Containerid
+	    	tmp.Password=single.Password
+	    	tmp.Port=single.Port
+	    	tmp.Id=single.Id
+	    	simples=append(simples,tmp)
 	    }
+	    fmt.Println(simples)
+	    // r,_:=json.Marshal(simples)
+	    // fmt.Println(r)
 	    c.Data["json"]=simples
     }else{
     	//update server
     	v.Id=server[0].Id
+    	v.Have=server[0].Have
     	models.UpdateServerById(&v)
     	c.Data["json"] = ""
     }

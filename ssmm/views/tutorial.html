@@ -1,0 +1,94 @@
+{{template "base/base.html" .}}
+{{define "meta"}}
+    <meta name="description" content="Beego Web is official blog and documentation website for beego app web framework" />
+    <meta name="keywords" content="Go, golang, beego, API documentation, blog, app web framework">
+    <title>{{i18n .Lang "homepage"}} - beego: {{i18n .Lang "app_intro"}}</title>
+{{end}}
+{{define "head"}}{{end}}
+{{define "body"}}
+
+<div class="container">
+                <div class="row">
+                    <div class="col-lg-8 col-lg-offset-2">
+                        <div class="modal-body">
+                            <h2>Windows设置使用shadowsocks教程</h2>
+                            <hr class="star-primary">
+                            <img src="static/img/tutorials/windows_shadowsocks_00.png" class="img-responsive img-centered" alt="">
+                            <h4>Step1，下载shadowsocks软件</h4>
+                            <p>百度网盘<strong><a href="http://pan.baidu.com/s/1c05CZT2" target="_blank">Win7及以下点这里</a></strong>    <strong><a href="http://pan.baidu.com/s/1c05CZT2" target="_blank">Win8点这里</a></strong></p>
+                            <h4>Step2，解压到任意目录，运行其中的shadowsocks.exe</h4>
+                            <img src="static/img/tutorials/windows_shadowsocks_01.png" class="img-responsive img-centered" alt="">
+                            <h4>Step3，首次运行，会弹出编辑服务器窗口，按图示填写您的shadowsocks服务器地址，端口，密码和加密方式，点确定</h4>
+                            <img src="static/img/tutorials/windows_shadowsocks_02.png" class="img-responsive img-centered" alt="">
+                            <p>点确定后，会如下提示</p>
+                            <img src="static/img/tutorials/windows_shadowsocks_03.png" class="img-responsive img-centered" alt="">
+                            <h4>Step4：按提示右键程序图标，弹出菜单，勾选“启用系统代理”</h4>
+                            <img src="static/img/tutorials/windows_shadowsocks_04.png" class="img-responsive img-centered" alt="">
+                            <p>好了，大功告成，打开任意浏览器上网吧，就是这么简单，就是这么任性</p>
+                            <p>设置好以后，IE/Chrome/Firefox无需设置，直接打开网址即可</p>
+                            <img src="static/img/tutorials/windows_shadowsocks_05.png" class="img-responsive img-centered" alt="">
+                            <p>Tips1 如何关闭？退出程序就OK了</p>
+                            <p>Tips2 PAC和全局模式是什么意思？PAC模式访问国内网站不通过服务器，全局模式所有网站都通过服务器</p>
+                            
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-8 col-lg-offset-2">
+                        <div class="modal-body">
+                            <h2>Android设置使用shadowsocks教程</h2>
+                            <hr class="star-primary">
+                            <img src="static/img/tutorials/android_shadowsocks_00.png" class="img-responsive img-centered" alt="">
+                            <h4>Step1，下载安卓的shadowsocks软件，安卓上叫“影梭”</h4>
+                            <p><strong><a href="http://pan.baidu.com/s/1jGwDrIu" target="_blank">百度网盘apk下载地址</a></strong></p>
+                            <p><strong><a href="https://play.google.com/store/apps/details?id=com.github.shadowsocks" target="_blank">Google Play下载地址</a></strong></p>
+                            <h4>Step2，安装下载的apk文件，安装完成后打开“影梭”</h4>
+                            <img src="static/img/tutorials/android_shadowsocks_01.png" class="img-responsive img-centered" alt="">
+                            <h4>Step3，按图示填写您的shadowsocks服务器地址，端口，密码和加密方式，右上方拖动打开</h4>
+                            <p>右上方拖动至打开</p>
+                            <img src="static/img/tutorials/android_shadowsocks_02.png" class="img-responsive img-centered" alt="">
+                            <h4>Step4，勾选我信任此软件，点“确定”，开始连接</h4>
+                            <img src="static/img/tutorials/android_shadowsocks_03.png" class="img-responsive img-centered" alt="">
+                            <h4>连接成功后，最上面会出现一把锁的图标，此时，打开你喜欢的应用吧，比如twitter、instagram</h4>
+                            <img src="static/img/tutorials/android_shadowsocks_04.png" class="img-responsive img-centered" alt="">
+                            <p>再次打开“影梭”，拖动即可断开连接</p>
+                            <img src="static/img/tutorials/android_shadowsocks_05.png" class="img-responsive img-centered" alt="">
+                            <p>也可以在屏幕下拉菜单中，选中关闭</p>
+                            <img src="static/img/tutorials/android_shadowsocks_06.png" class="img-responsive img-centered" alt="">
+                            <p>Tips1 无需root即可使用</p>
+                            <p>Tips2 浏览器和App都可以代理，和VPN效果完全一样</p>
+                            
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-8 col-lg-offset-2">
+                        <div class="modal-body">
+                            <h2>Mac OS X设置使用shadowsocks教程</h2>
+                            <hr class="star-primary">
+                            <img src="static/img/tutorials/mac_shadowsocks_00.png" class="img-responsive img-centered" alt="">
+                            <h4>Step1，下载用于Mac OS X的shadowsocksX软件</h4>
+                            <p><strong><a href="http://pan.baidu.com/s/1pJAGlB1" target="_blank">百度网盘dmg下载地址</a></strong></p>
+                            <h4>Step2，打开下载的dmg文件，将程序图标拖到右边的Applications，安装完成</h4>
+                            <img src="static/img/tutorials/mac_shadowsocks_01.png" class="img-responsive img-centered" alt="">
+                            <h4>Step3，进入Launchpad，打开ShadowsocksX,右上方出现程序图标，点击图标--“服务器”--“打开服务器设定”</h4>
+                            <img src="static/img/tutorials/mac_shadowsocks_02.png" class="img-responsive img-centered" alt="">
+                            <h4>Step4，根据帐号信息，填写服务器地址（IP或者域名），端口，加密方式和密码，点确定</h4>
+                            <img src="static/img/tutorials/mac_shadowsocks_03.png" class="img-responsive img-centered" alt="">
+                            <h4>Step5，选择刚刚配置好的服务器，点“打开Shadowsocks”，Done!</h4>
+                            <img src="static/img/tutorials/mac_shadowsocks_04.png" class="img-responsive img-centered" alt="">
+                            <h4>打开Safari或者Chrome开始上网吧</h4>
+                            <img src="static/img/tutorials/mac_shadowsocks_05.png" class="img-responsive img-centered" alt="">
+                            <p>有些应用需要单独设置，比如Dropbox</p>
+                            <p>打开Dropbox首选项，“网络”--代理服务器“更改设置”，然后按下图设置即可</p>
+                            <img src="static/img/tutorials/mac_shadowsocks_dropbox01.png" class="img-responsive img-centered" alt="">
+                            <img src="static/img/tutorials/mac_shadowsocks_dropbox02.png" class="img-responsive img-centered" alt="">
+                            <p>Tips1 如果有网站打不开，或者图片刷不出来，切换全局试试</p>
+                            <p>Tips2 同样可以编辑PAC，自定义通过服务器代理的网站</p>
+                            
+                        </div>
+                    </div>
+                </div>
+</div>
+
+{{end}}

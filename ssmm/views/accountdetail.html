@@ -1,0 +1,38 @@
+{{template "base/base.html" .}}
+{{define "head"}}{{end}}
+{{define "meta"}}
+<title>{{.Title}} - beego: {{i18n .Lang "app_intro"}}</title>
+<link rel="stylesheet" href="/static/css/cartstyle.css" />
+{{end}}
+{{define "body"}}
+<div class="container main-container">
+	<div class="row">
+		<div class="col-md-12">
+			<div class="box">
+				<div class="cell slim page-box">
+					<div id="order-cart">
+
+						<h1>账户详情</h1>
+
+						<table>
+							<tr>
+								<td><h2>服务器IP</h2></td>
+								<td><h2>{{.ip}}</h2></td>
+								<td><h2>端口</h2></td>
+								<td><h2>{{.port}}</h2></td>
+							</tr>
+							<tr>
+								<td><h2>加密方式</h2></td>
+								<td><h2>rc4-md5</h2></td>
+								<td><h2>密码</h2></td>
+								<td><h2>{{.password}}</h2></td>
+							</tr>
+						</table>
+						<p><a href="/user">回到用户中心</a></p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{{end}}

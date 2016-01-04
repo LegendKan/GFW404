@@ -51,6 +51,8 @@ func (c *CartController) CheckoutService() {
 		totalprice += item.Price
 	}
 	c.Data["total"] = totalprice
+	ipindex:=strings.Index(c.Ctx.Request.RemoteAddr,":")
+	c.Data["clientip"]=c.Ctx.Request.RemoteAddr[0:ipindex]
 	c.TplNames = "cartview-dev.html"
 }
 
@@ -88,10 +90,70 @@ func (c *CartController) AddService() {
 	c.Redirect("/cart/view", 302)
 }
 
+func (c *CartController) DeleteService() {
+	c.Data["IsService"] = true
+	id := c.Ctx.Input.Param(":id")
+	b, error := strconv.Atoi(id)
+	if error != nil {
+		c.Redirect("/cart/view", 302)
+		return
+	}
+	items := c.GetSession("cartitems")
+	if items == nil {
+		c.Redirect("/service", 302)
+		return
+	}
+	itemss := items.([]CartItem)
+	if len(itemss) <= 0 {
+		c.Redirect("/service", 302)
+		return
+	}
+	if len(itemss)-1<b {
+		c.Redirect("/cart/view", 302)
+		return
+	}
+	itemss = append(itemss[:b], itemss[b+1:]...)
+	c.SetSession("cartitems", itemss)
+	var totalprice float64
+	for _, item := range itemss {
+		totalprice += item.Price
+	}
+	ipindex:=strings.Index(c.Ctx.Request.RemoteAddr,":")
+	c.Data["cartitems"] = itemss
+	c.Data["total"] = totalprice
+	c.Data["clientip"]=c.Ctx.Request.RemoteAddr[0:ipindex]
+	c.TplNames = "cartview-dev.html"
+}
+
 func (c *CartController) ViewService() {
 	c.Data["IsService"] = true
 	//this.Data["Title"] = "产品与服务"
 	c.TplNames = "cart.html"
+}
+
+func (c *CartController) PromoteFilter() {
+	c.Data["IsService"] = true
+	items := c.GetSession("cartitems")
+	if items == nil {
+		c.Redirect("/service", 302)
+		return
+	}
+	itemss := items.([]CartItem)
+	if len(itemss) <= 0 {
+		c.Redirect("/service", 302)
+		return
+	}
+	var totalprice float64
+	for _, item := range itemss {
+		totalprice += item.Price
+	}
+	ipindex:=strings.Index(c.Ctx.Request.RemoteAddr,":")
+	c.Data["haserror"] = true
+	c.Data["error"] = "所填写优惠码不存在！"
+	c.Data["cartitems"] = itemss
+	c.Data["total"] = totalprice
+	c.Data["clientip"]=c.Ctx.Request.RemoteAddr[0:ipindex]
+	c.TplNames = "cartview-dev.html"
 }
 
 func (c *CartController) PlaceOrder() {
@@ -107,13 +169,22 @@ func (c *CartController) PlaceOrder() {
 	}
 	user := c.GetSession("uid")
 	var userid int
+	var totalprice float64
+	for _, item := range itemss {
+		totalprice += item.Price
+	}
+	ipindex:=strings.Index(c.Ctx.Request.RemoteAddr,":")
 	if user == nil {
 		//判断是登录还是注册
 		isnew, err := c.GetBool("newuser")
 		if err != nil {
 			c.Data["haserror"] = true
 			c.Data["error"] = err.Error()
+			c.Data["cartitems"] = itemss
+			c.Data["total"] = totalprice
+			c.Data["clientip"]=c.Ctx.Request.RemoteAddr[0:ipindex]
 			c.TplNames = "cartview-dev.html"
+			return
 		}
 		if isnew {
 			//注册
@@ -123,6 +194,9 @@ func (c *CartController) PlaceOrder() {
 			if len(email) <= 8 || len(pass) <= 4 {
 				c.Data["haserror"] = true
 				c.Data["error"] = "请填写正确的邮箱、密码"
+				c.Data["cartitems"] = itemss
+				c.Data["total"] = totalprice
+				c.Data["clientip"]=c.Ctx.Request.RemoteAddr[0:ipindex]
 				c.TplNames = "cartview-dev.html"
 				//c.Render()
 				return
@@ -132,6 +206,9 @@ func (c *CartController) PlaceOrder() {
 			if u != nil {
 				c.Data["haserror"] = true
 				c.Data["error"] = "邮箱已注册"
+				c.Data["cartitems"] = itemss
+				c.Data["total"] = totalprice
+				c.Data["clientip"]=c.Ctx.Request.RemoteAddr[0:ipindex]
 				c.TplNames = "cartview-dev.html"
 				return
 			}
@@ -141,10 +218,22 @@ func (c *CartController) PlaceOrder() {
 			user.Email = email
 			user.Username = username
 			user.Password = pass
+			user.Firstname=firstname
+			user.Lastname=lastname
+			user.Country=c.GetString("country")
+			user.Province=c.GetString("state")
+			user.City=c.GetString("city")
+			user.Company=c.GetString("companyname")
+			user.Address1=c.GetString("address1")
+			user.Address2=c.GetString("address2")
+			user.Zipcode=c.GetString("postcode")
 			uid, err := models.AddUser(&user)
 			if err != nil {
 				c.Data["haserror"] = true
 				c.Data["error"] = err.Error()
+				c.Data["cartitems"] = itemss
+				c.Data["total"] = totalprice
+				c.Data["clientip"]=c.Ctx.Request.RemoteAddr[0:ipindex]
 				c.TplNames = "cartview-dev.html"
 				return
 			}
@@ -162,6 +251,9 @@ func (c *CartController) PlaceOrder() {
 			if len(email) <= 8 || len(pass) <= 4 {
 				c.Data["haserror"] = true
 				c.Data["error"] = "请填写正确的邮箱、密码"
+				c.Data["cartitems"] = itemss
+				c.Data["total"] = totalprice
+				c.Data["clientip"]=c.Ctx.Request.RemoteAddr[0:ipindex]
 				c.TplNames = "cartview-dev.html"
 				return
 			}
@@ -169,6 +261,9 @@ func (c *CartController) PlaceOrder() {
 			if err != nil {
 				c.Data["haserror"] = true
 				c.Data["error"] = err.Error()
+				c.Data["cartitems"] = itemss
+				c.Data["total"] = totalprice
+				c.Data["clientip"]=c.Ctx.Request.RemoteAddr[0:ipindex]
 				c.TplNames = "cartview-dev.html"
 				return
 			}
@@ -201,11 +296,14 @@ func (c *CartController) PlaceOrder() {
 			exprietime = timenow.AddDate(1, 0, 0)
 			cyclestr="年付"
 		}
-		account := &models.Account{Serverid: item.Server, Userid: &models.User{Id: userid}, Cycle: item.Cycle, Expiretime: exprietime}
+		account := &models.Account{Serverid: item.Server, Userid: &models.User{Id: userid}, Cycle: item.Cycle, Expiretime: exprietime, Firstprice: item.Price, Recurringprice: item.Price}
 		aid, err := models.AddAccount(account)
 		if err != nil {
 			c.Data["haserror"] = true
 			c.Data["error"] = err.Error()
+			c.Data["cartitems"] = itemss
+			c.Data["total"] = totalprice
+			c.Data["clientip"]=c.Ctx.Request.RemoteAddr[0:ipindex]
 			c.TplNames = "cartview-dev.html"
 			return
 		}
@@ -215,6 +313,9 @@ func (c *CartController) PlaceOrder() {
 		if err != nil {
 			c.Data["haserror"] = true
 			c.Data["error"] = err.Error()
+			c.Data["cartitems"] = itemss
+			c.Data["total"] = totalprice
+			c.Data["clientip"]=c.Ctx.Request.RemoteAddr[0:ipindex]
 			c.TplNames = "cartview-dev.html"
 			return
 		}

@@ -66,6 +66,26 @@
 					function enterNewCC() {
 					    jQuery(".newccinfo").show();
 					}
+
+					function check(){
+						if(jQuery("#newuser").val()=="true"){
+							if(jQuery("input[name='email1']").val().length<=8||jQuery("input[name='password1']").val().length<=4){
+								alert("用户名或密码输入不合法！");
+								return false;
+							}
+						}else{
+							if(jQuery("input[name='username']").val().length<=8||jQuery("input[name='password']").val().length<=4){
+								alert("用户名或密码输入不合法！");
+								return false;
+							}
+						}
+						if(!jQuery('#accepttos').prop('checked')){
+							alert("请同意服务条款！");
+							return false;
+						}
+						jQuery("#subutton").val("请稍后. . .");
+						return true;
+					}
 					</script>
 
 
@@ -84,12 +104,12 @@
 					</td></tr>
 					{{end}}
 
-					{{range .cartitems}}
+					{{range $index, $elem := .cartitems}}
 					<tr><td>
-					<strong><em>Shadowsocks 帐号</em> - {{.Server.Title}} - {{if eq .Cycle 1}}月付{{else if eq .Cycle 2}}季付{{else}}年付{{end}}</strong>
+					<strong><em>Shadowsocks 帐号</em> - {{$elem.Server.Title}} - {{if eq $elem.Cycle 1}}月付{{else if eq $elem.Cycle 2}}季付{{else}}年付{{end}}</strong>
 					<!--<br /><div align="right">如果您需要订购多个账号，请输入数目： <input type="text" name="qty[0]" size="3" value="1" /> <input type="submit" value="更新" /></div>-->
-					</td><td class="textcenter"><strong>￥{{.Price}} RMB</strong></td></tr>
-					<tr class="config"><td><!--<a href="/cart.php?a=confproduct&i=0" class="textgreen">[编辑配置]</a>--> <a href="#" onclick="removeItem('p','0');return false" class="textred">[移除]</a></td><td>&nbsp;</td></tr>
+					</td><td class="textcenter"><strong>￥{{$elem.Price}} RMB</strong></td></tr>
+					<tr class="config"><td><!--<a href="/cart.php?a=confproduct&i=0" class="textgreen">[编辑配置]</a>--> <a href="/cart/delete/{{$index}}" class="textred">[移除]</a></td><td>&nbsp;</td></tr>
 					{{end}}
 
 
@@ -107,12 +127,13 @@
 
 					<table width="100%"><tr><td width="55%" valign="top" class="textcenter">
 
-					<form method="post" action="/cart.php?a=view">
+					<form method="post" action="/cart/promote">
 					<input type="hidden" name="token" value="ae32670b3fd300e4e06841299cfa37b011cda73e" />
 					<input type="hidden" name="validatepromo" value="true" />
 					
 					<strong>优惠码</strong>
-					<input type="text" name="promocode" size="20" />&nbsp<input type="submit" value="验证 >>" /></form>
+					<input type="text" name="promocode" size="20" />&nbsp<input type="submit" value="验证 >>" />
+					</form>
 
 					</td><td width="45%" class="textcenter">
 
@@ -125,7 +146,7 @@
 
 
 					<div class="center90">
-					<form method="post" action="/cart/checkout">
+					<form method="post" action="/cart/checkout" onsubmit="return check()">
 					<input type="hidden" name="token" value="08cfde69ea2ab7a41c75239ada2342b76ccc4c7d" />
 					<input type="hidden" id="newuser" name="newuser" value="true" />
 					{{if not .islogin}}
@@ -179,7 +200,7 @@
 
 				    <br />
 					<p class="cartsubheading">付款方式</p>
-					<p align="center"><label><input type="radio" name="paymentmethod" value="alipay" onclick="hideCCForm()" checked />Alipay 支付宝全能接口 v2.0</label> <label><input type="radio" name="paymentmethod" value="banktransfer" onclick="hideCCForm()" />比特币付款</label> </p>
+					<p align="center"><label><input type="radio" name="paymentmethod" value="alipay" onclick="hideCCForm()" checked />支付宝/银联支付</label> </p>
 
 					<div id="ccinputform" style="display:none;">
 					<table cellspacing="1" cellpadding="0" class="frame"><tr><td>
@@ -229,16 +250,15 @@
 					<p class="cartsubheading">备注/额外信息</p>
 					<p align="center"><textarea name="notes" rows="4" style="width:75%" onFocus="if(this.value=='您可以输入任何您想包含在订单中的额外注释或信息. . .'){this.value='';}" onBlur="if (this.value==''){this.value='您可以输入任何您想包含在订单中的额外注释或信息. . .';}">您可以输入任何您想包含在订单中的额外注释或信息. . .</textarea></p>
 
-					<p align="center"><label><input type="checkbox" name="accepttos" /> 我已经阅读并同意该服务条款 <a href="https://shadowsocks.com/tos.html" target="_blank">服务条款</a></label><p>
+					<p align="center"><label><input type="checkbox" name="accepttos" id="accepttos" /> 我已经阅读并同意该服务条款 <a href="/tos" target="_blank">服务条款</a></label><p>
 
-					<p align="center"><input type="submit" value="完成订购" onclick="this.value='请稍后. . .'" class="buttongo" /></p>
+					<p align="center"><input type="submit" id="subutton" value="完成订购"  class="buttongo" /></p>
 
-					<p><img align="left" src="/static/img/padlock.gif" border="0" vspace="5" alt="Secure Transaction" style="padding-right: 10px;" /> 这个订单可以被安全的使用, 以防诈骗, 您的 IP (<strong>202.120.40.97</strong>) 已经记录到日志中.</p>
+					<p><img align="left" src="/static/img/padlock.gif" border="0" vspace="5" alt="Secure Transaction" style="padding-right: 10px;" /> 这个订单可以被安全的使用, 以防诈骗, 您的 IP (<strong>{{.clientip}}</strong>) 已经记录到日志中.</p>
 
 					</form>
 
 					</div>
-
 
 					</div>
 				</div>

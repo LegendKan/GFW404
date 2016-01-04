@@ -10,13 +10,24 @@
 		<div class="col-md-12">
 			<div class="box">
 				<div class="cell slim page-box">
+					<script language="javascript">
+						function check(){
+							if(jQuery("input[name='username']").val().length<=8||jQuery("input[name='password']").val().length<=4){
+								alert("用户名或密码输入不合法！");
+								return false;
+							}
+							jQuery("#subutton").val("请稍后. . .");
+							return true;
+						}
+					</script>
+
 					<div id="order-cart">
 
 						<h1>用户登录</h1>
 						{{if .haserror}}
 						<div class="errorbox"> &nbsp;#&nbsp; {{.error}}</li> &nbsp;#&nbsp; </div><br />
 						{{end}}
-						<form method="post" action="/user/login" class="form-stacked">
+						<form method="post" action="/user/login" class="form-stacked" onsubmit="return check()">
 						<input type="hidden" name="token" value="db0d3b91b3b0c3cb7d31e176f0ed71ca48de1a0c" />
 
 						<div class="logincontainer">
@@ -38,7 +49,7 @@
 								</div>
 
 						        <div align="center">
-								  <div class="loginbtn"><input type="submit" class="btn btn-primary btn-large" style="padding:10px 30px 10px 30px;" value="登录" /></div>
+								  <div class="loginbtn"><input type="submit" class="btn btn-primary btn-large" style="padding:10px 30px 10px 30px;" id="subutton" value="登录" /></div>
 						          <div class="rememberme"><input type="checkbox" name="rememberme" /> <strong>自动登录</strong></div>
 						          <br />
 						          <br />

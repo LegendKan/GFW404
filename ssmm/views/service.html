@@ -16,7 +16,7 @@
 					    </h1>
 						<div class="cartbox" id="catlinks" align="center">
 							Shadowsocks 帐号 |
-							<a href="/cart.php?a=view">查看购物车</a>
+							<a href="/cart/view">查看购物车</a>
 						</div>
 
 						<br />
@@ -28,7 +28,7 @@
 							{{str2html .Description}}
 							<br /><br />
 							<div class="cartpricing">
-							￥{{.Month}} RMB 年付<br />￥{{.Quarter}} RMB 两年<br />￥{{.Year}} RMB 三年<br /></div>
+							￥{{.Month}} RMB 月付<br />￥{{.Quarter}} RMB 季付<br />￥{{.Year}} RMB 年付<br /></div>
 							<div align="center"><input type="button" value="现在订购" onclick="window.location='/cart/conf/{{.Id}}'" /></div>
 						</div>
 						<br />

@@ -12,6 +12,17 @@
 		<div class="col-md-12">
 			<div class="box">
 				<div class="cell slim page-box">
+					<script language="javascript">
+						function check(){
+							if(jQuery("input[name='username']").val().length<=8||jQuery("input[name='password']").val().length<=4){
+								alert("用户名或密码输入不合法！");
+								return false;
+							}
+							jQuery("#subutton").val("请稍后. . .");
+							return true;
+						}
+					</script>
+
 					<div id="order-cart">
 						<script>
 						window.langPasswordStrength = "密码强度";
@@ -24,7 +35,7 @@
 						<div class="errorbox"> &nbsp;#&nbsp; {{.error}}</li> &nbsp;#&nbsp; </div><br />
 						{{end}}
 						 <p>已经有账号?<a href="/user/login"><strong>点击登录</strong></a></p>
-						<form method="post" action="/user/register" id="mainfrm">
+						<form method="post" action="/user/register" id="mainfrm" onsubmit="return check()">
 						<input type="hidden" name="token" value="08cfde69ea2ab7a41c75239ada2342b76ccc4c7d" />
 						<input type="hidden" name="submit" value="true" />
 
@@ -61,7 +72,7 @@
 						</table>
 						</td></tr></table>
 
-						<p align="center"><input type="submit" value="立即注册" onclick="this.value='请稍后. . .'" class="buttongo" /></p>
+						<p align="center"><input type="submit" value="立即注册" id="subutton" class="buttongo" /></p>
 						</form>
 
 					</div>

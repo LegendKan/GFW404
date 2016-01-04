@@ -12,24 +12,22 @@
                         </ul>
                     </div>
                     {{if eq .Lang "zh-CN"}}
-                        <a class="btn btn-success" href="/donate"><i class="icon-dollar"></i> 捐赠我们</a>
+                        <a class="btn btn-success" href="/service"> 立即订购</a>
                     {{end}}
                     {{if eq .Lang "en-US"}}
-                        <a class="btn btn-success" href="/donate"><i class="icon-dollar"></i> Donate Us</a>
+                        <a class="btn btn-success" href="/service"> Order Now</a>
                     {{end}}
                 </div>
                 
                 <p>
                     <a href="/about"><strong>{{i18n .Lang "about"}}</strong></a>
                     |
-                    <a href="/team"><strong>{{i18n .Lang "team"}}</strong></a>
-                    |
-                    <a target="_blank" href="https://github.com/astaxie/beego" target="_blank"><strong><i class="icon-github-sign"></i> Github</strong></a>
+                    <a href="/tos"><strong>{{i18n .Lang "tos"}}</strong></a>
                     - {{.PageStartTime|loadtimes}}ms.
                 </p>
 
                 <p>
-                    {{i18n .Lang "copyright"}} © 2012-2014 Beego {{i18n .Lang "app_license" | str2html}}
+                    {{i18n .Lang "copyright"}} 2015-2016 GFW404.com
                 </p>
 
             </div>

@@ -25,9 +25,9 @@ func (c *AccountController) URLMapping() {
 
 //update
 func (c *AccountController) Update() {
-	id:=c.GetInt("id")
+	id,_:=c.GetInt("id")
 	containerid:=c.GetString("containerid")
-	port:=c.GetInt("port")
+	port,_:=c.GetInt("port")
 	ip:=c.GetString("ip")
 	password:=c.GetString("password")
 	auth:=c.GetString("auth")
@@ -40,13 +40,13 @@ func (c *AccountController) Update() {
     query := map[string]string{
         "Ip": ip,
     }
-    server,err:=models.GetAllServer(query, fields, sortby, order, offset, limit)
+    server,err:=models.GetAllActiveServer(query, fields, sortby, order, offset, limit)
     if err!=nil{
     	c.Abort("500")
     }
     if len(server)==0{
     	c.Abort("404")
-    }else if auth==server[0].Auth{
+    }else if auth==((models.Server)(server[0])).Auth{
     	var v models.Account
     	v.Id=id
     	v.Containerid=containerid
@@ -95,6 +95,7 @@ func (c *AccountController) GetOne() {
 	}
 	c.ServeJson()
 }
+
 
 // @Title Get All
 // @Description get Account

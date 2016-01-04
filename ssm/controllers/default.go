@@ -3,8 +3,12 @@ package controllers
 import (
 	"encoding/json"
 	"github.com/astaxie/beego"
-	"ssm/controllers/unixsocket"
+	"sync"
+	"strconv"
+	"ssm/models"
 )
+
+var lock sync.Mutex
 
 type MainController struct {
 	beego.Controller
@@ -22,7 +26,17 @@ type TestController struct {
 
 func (c *TestController) Get() {
 	//c.Data["Address"]
-	c.Ctx.WriteString(MasterAddr + ":" + MasterPort + ":" + passAuth + "\n" + unixsocket.SocketTest())
+	//"ssm/controllers/unixsocket"
+	//c.Ctx.WriteString(MasterAddr + ":" + MasterPort + ":" + passAuth + "\n" + unixsocket.SocketTest())
+	var t models.Account
+	t.Id=1
+	t.Port=9009
+	t.Containerid="123456"
+	t.Password="111111"
+	a:=make([]models.Account,1)
+	a=append(a,t)
+	SyncContainers(a)
+	c.Ctx.WriteString("Success")
 }
 
 type AddController struct {
@@ -34,6 +48,12 @@ func (c *AddController) Get() {
 	pass := c.GetString("pass")
 	if len(pass) <= 0 {
 		pass = randSeq(8)
+	}
+	if len(port)<=0{
+		lock.Lock()
+		port=strconv.Itoa(MaxPort)
+		MaxPort++
+		lock.Unlock()
 	}
 	r := make(map[string]interface{})
 	ss := make(map[string]string)
