@@ -208,7 +208,7 @@ func (c *PayNowController) Callback() {
     var order []string
     var limit int64 = 100
     var offset int64 = 0
-    fields := []string{"Id", "Accountid", "Price", "Createtime", "Expiretime", "Ispaid", "Payno"}
+    fields := []string{"Id", "Accountid", "Price", "Createtime", "Expiretime", "Ispaid", "Active", "Payno"}
     query := map[string]string{
         "Payno": orderId,
     }

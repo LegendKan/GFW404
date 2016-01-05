@@ -16,6 +16,7 @@ type Bill struct {
 	Createtime time.Time `orm:"column(createtime);auto_now_add;type(datetime)"`
 	Expiretime time.Time `orm:"column(expiretime);type(datetime)"`
 	Ispaid     int8      `orm:"column(ispaid)"`
+	Active     int8      `orm:"column(active)"`
 	Payno      string    `orm:"column(payno)";size(255)`
 }
 
@@ -119,7 +120,7 @@ func GetAllBill(query map[string]string, fields []string, sortby []string, order
 func GetAllUnpaidBills(uid string) ([]orm.Params, error) {
 	var maps []orm.Params
 	o := orm.NewOrm()
-	_, err := o.Raw("SELECT bill.id, bill.accountid, bill.price, bill.createtime, bill.expiretime FROM account,bill WHERE account.userid = ? and bill.accountid=account.id and TO_DAYS(NOW()) - TO_DAYS(bill.expiretime) <= 5 and bill.ispaid=0 order by bill.id desc", uid).Values(&maps)
+	_, err := o.Raw("SELECT bill.id, bill.accountid, bill.price, bill.createtime, bill.expiretime FROM account,bill WHERE account.userid = ? and bill.accountid=account.id and TO_DAYS(NOW()) - TO_DAYS(bill.expiretime) <= 5 and bill.ispaid=0 and bill.active=1 order by bill.id desc", uid).Values(&maps)
 	if err!=nil {
 		return nil,err
 	}
