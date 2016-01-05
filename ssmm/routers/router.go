@@ -54,6 +54,7 @@ func init() {
 	beego.Router("/cart/view", &controllers.CartController{}, "get:CheckoutService")
 	beego.Router("/cart", &controllers.CartController{}, "get:ViewService")
 	beego.Router("/cart/add", &controllers.CartController{}, "post:AddService")
+	beego.Router("/cart/clear", &controllers.CartController{}, "get:ClearService")
 	beego.Router("/cart/delete/:id([0-9]+)", &controllers.CartController{}, "get:DeleteService")
 	beego.Router("/cart/promote", &controllers.CartController{}, "post:PromoteFilter")
 	beego.Router("/cart/checkout", &controllers.CartController{}, "post:PlaceOrder")

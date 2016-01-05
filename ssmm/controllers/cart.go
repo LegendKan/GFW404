@@ -114,15 +114,22 @@ func (c *CartController) DeleteService() {
 	}
 	itemss = append(itemss[:b], itemss[b+1:]...)
 	c.SetSession("cartitems", itemss)
-	var totalprice float64
-	for _, item := range itemss {
-		totalprice += item.Price
-	}
-	ipindex:=strings.Index(c.Ctx.Request.RemoteAddr,":")
-	c.Data["cartitems"] = itemss
-	c.Data["total"] = totalprice
-	c.Data["clientip"]=c.Ctx.Request.RemoteAddr[0:ipindex]
-	c.TplNames = "cartview-dev.html"
+	// var totalprice float64
+	// for _, item := range itemss {
+	// 	totalprice += item.Price
+	// }
+	// ipindex:=strings.Index(c.Ctx.Request.RemoteAddr,":")
+	// c.Data["cartitems"] = itemss
+	// c.Data["total"] = totalprice
+	// c.Data["clientip"]=c.Ctx.Request.RemoteAddr[0:ipindex]
+	// c.TplNames = "cartview-dev.html"
+	c.Redirect("/cart/view", 302)
+}
+
+func (c *CartController) ClearService() {
+	c.Data["IsService"] = true
+	c.DelSession("cartitems")
+	c.Redirect("/cart/view", 302)
 }
 
 func (c *CartController) ViewService() {
