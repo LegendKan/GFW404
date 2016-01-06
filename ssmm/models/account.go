@@ -202,6 +202,16 @@ func GetAllActiveAccount(query map[string]string, fields []string, sortby []stri
 	return nil, err
 }
 
+//返回全部active的account
+func GetAllActiveAccountNew() ([]Account, error) {
+	fmt.Println("Get all active accounts")
+	o := orm.NewOrm()
+	var accounts []Account
+	num, err := o.QueryTable("account").Filter("active", 1).All(&accounts)
+	fmt.Printf("Returned Rows Num: %s, %s", num, err)
+	return accounts, err
+}
+
 func GetAllAccountByUserId(uid string) ([]orm.Params, error){
 	var maps []orm.Params
 	o := orm.NewOrm()

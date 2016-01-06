@@ -89,6 +89,28 @@ func (c *AddController) Get() {
 	c.Ctx.WriteString(string(b))
 }
 
+type StopController struct {
+	beego.Controller
+}
+
+func (c *StopController) Get() {
+	cid := c.GetString("cid")
+	ret := make(map[string]interface{})
+	if len(cid) <= 0 {
+		ret["status"] = false
+		ret["data"] = "No Container ID"
+	} else {
+		if StopContainer(cid) {
+			ret["status"] = true
+		} else {
+			ret["status"] = false
+			ret["data"] = "Error happened while deleting"
+		}
+	}
+	b, _ := json.Marshal(ret)
+	c.Ctx.WriteString(string(b))
+}
+
 type DeleteController struct {
 	beego.Controller
 }

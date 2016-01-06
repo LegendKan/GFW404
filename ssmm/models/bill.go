@@ -127,6 +127,23 @@ func GetAllUnpaidBills(uid string) ([]orm.Params, error) {
 	return maps,nil
 }
 
+func GetUnpaidBillByAccount(account Account) (Bill, bool) {
+	var b Bill
+	b.Accountid=account.Id
+	b.Active=1
+	b.Expiretime=account.Expiretime
+	err:= o.Read(&b)
+	if err == orm.ErrNoRows {
+	    fmt.Println("Err No Rows")
+	    return b, false
+	} else if err == orm.ErrMissPK {
+	    fmt.Println("Err Miss PK")
+	    return b, false
+	} else {
+	    return b, true
+	}
+}
+
 // UpdateBill updates Bill by Id and returns error if
 // the record to be updated doesn't exist
 func UpdateBillById(m *Bill) (err error) {

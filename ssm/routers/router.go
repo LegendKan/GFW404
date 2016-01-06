@@ -17,6 +17,7 @@ func init() {
 		beego.NSRouter("/", &controllers.MainController{}),
 		beego.NSRouter("/test", &controllers.TestController{}),
 		beego.NSRouter("/add", &controllers.AddController{}),
+		beego.NSRouter("/stop", &controllers.StopController{}),
 		beego.NSRouter("/delete", &controllers.DeleteController{}))
 	beego.AddNamespace(ns)
 }
