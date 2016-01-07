@@ -35,6 +35,13 @@ func initLocales() {
 	}
 }
 
+func initEmail() {
+	Emailuser = beego.AppConfig.String("email::emailuser")
+	Emailpass = beego.AppConfig.String("email::emailpass")
+	Smtp = beego.AppConfig.String("email::smtp")
+	Domain = beego.AppConfig.String("domain")
+}
+
 func settingCompress() {
 	setting, err := compress.LoadJsonConf(CompressConfPath, IsPro, "/")
 	if err != nil {
@@ -79,5 +86,6 @@ func initTemplates() {
 func InitApp() {
 	initTemplates()
 	initLocales()
+	initEmail()
 	settingCompress()
 }

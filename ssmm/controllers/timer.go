@@ -38,6 +38,9 @@ func erverdayFunc() {
                 //创建
                 b.Createtime=now
                 b.Ispaid=0
+                var billingids string
+                billingids = strconv.FormatInt(time.Now().Unix(), 10)
+                b.Payno=billingids
                 models.AddBill(b)
             }
             //发邮件提醒
