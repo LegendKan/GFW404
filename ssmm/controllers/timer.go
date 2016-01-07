@@ -2,6 +2,8 @@ package controllers
 import(
     "time"
     "ssmm/models"
+    "fmt"
+    "strconv"
 )
 func StartTimer() {
     go func() {
@@ -21,7 +23,8 @@ func StartTimer() {
 func erverdayFunc() {
     fmt.Println("Start the Timer")
     //获取全部active的accounts
-    if accounts, err := models.GetAllActiveAccountNew(); err!=nil{
+    accounts, err := models.GetAllActiveAccountNew()
+    if err!=nil{
         fmt.Println(err)
         return
     }
@@ -37,13 +40,20 @@ func erverdayFunc() {
             if !found {
                 //创建
                 b.Createtime=now
+                b.Expiretime=v.Expiretime
                 b.Ispaid=0
+                b.Price=v.Recurringprice
                 var billingids string
                 billingids = strconv.FormatInt(time.Now().Unix(), 10)
                 b.Payno=billingids
-                models.AddBill(b)
+                models.AddBill(&b)
             }
             //发邮件提醒
+
+            user, erru:=models.GetUserById(v.Userid.Id)
+            if erru==nil{
+                go SendBillInfo(user.Email, user.Username, b.Payno, b.Price, b.Createtime.Format("2006-01-02"), b.Expiretime.Format("2006-01-02"))
+            }
 
         }else if days>-5{
             //stop
@@ -66,7 +76,7 @@ func erverdayFunc() {
             b, found :=models.GetUnpaidBillByAccount(v)
             if found {
                 b.Active=0
-                e:=UpdateBillById(b)
+                e:=models.UpdateBillById(&b)
                 if e!=nil {
                     fmt.Println(e)
                 }

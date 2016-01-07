@@ -58,6 +58,7 @@ func (c *WebUserController) Register() {
 		c.TplNames = "register.html"
 		return
 	}
+	go SendWelcome(email,username,pass)
 	//添加session,cookie
 	c.SetSession("email", email)
 	c.SetSession("uid", int(uid))

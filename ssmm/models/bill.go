@@ -129,6 +129,7 @@ func GetAllUnpaidBills(uid string) ([]orm.Params, error) {
 
 func GetUnpaidBillByAccount(account Account) (Bill, bool) {
 	var b Bill
+	o := orm.NewOrm()
 	b.Accountid=account.Id
 	b.Active=1
 	b.Expiretime=account.Expiretime

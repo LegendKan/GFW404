@@ -29,7 +29,7 @@ func SendWelcome(mail, username, password string) bool {
 	body := `Dear `+username+`,
 Thank you for signing up with us. Your new account has been setup and you can now login to our client area using the details below.
 
-Email Address: `+username+`
+Email Address: `+mail+`
 Password: `+password+`
 
 To login, visit http://www.gfw404.com/user
@@ -79,11 +79,11 @@ www.gfw404.com
 	}
 }
 
-func SendBillInfo(mail string, username string, bid int, price float64, createtime, expiretime string) bool {
+func SendBillInfo(mail string, username string, bid string, price float64, createtime, expiretime string) bool {
 	body := `Dear `+username+`,
-This is a billing reminder that your invoice no. 107367 which was generated on `+createtime+` is due on `+expiretime+`.
+This is a billing reminder that your invoice no. `+bid+` which was generated on `+createtime+` is due on `+expiretime+`.
 
-Invoice: `++`
+Invoice: `+bid+`
 Amount Due: ￥`+strconv.FormatFloat(price, 'f', 2, 64) +`RMB
 Due Date: `+expiretime+`
 
@@ -104,13 +104,12 @@ www.gfw404.com
 	}
 }
 
-func SendBillComfirm(mail string, username string, bid int, price float64, createtime, expiretime string) bool {
+func SendBillComfirm(mail string, username string, bid string, price float64) bool {
 	body := `Dear `+username+`,
-This is a payment receipt for Invoice `+strconv.Itoa(bid)+` generated on  `+createtime+`.
+This is a payment receipt for Invoice `+bid+`.
 
-Invoice: `++`
+Invoice: `+bid+`
 Amount Due: ￥`+strconv.FormatFloat(price, 'f', 2, 64) +`RMB
-Due Date: `+expiretime+`
 
 Note: This email will serve as an official receipt for this payment.
 

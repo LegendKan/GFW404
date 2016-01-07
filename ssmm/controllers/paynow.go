@@ -217,6 +217,10 @@ func (c *PayNowController) Callback() {
         c.Ctx.WriteString("success=N")
         return
     }
+    //发邮件标志
+    hassent :=false
+    var user *models.User
+    var erru error
     for _, bill := range l {
         //bill := billi.(*models.Bill)
         if bill.Ispaid == 1 {
@@ -250,6 +254,20 @@ func (c *PayNowController) Callback() {
                         account.Port, _ = strconv.Atoi(con.Con.Port)
                         account.Password = con.Con.Password
                         models.UpdateAccountById(account)
+                        //发送邮件
+                        if !hassent{
+                            user, erru=models.GetUserById(account.Userid.Id)
+                        }
+                        if erru==nil{
+                            if !hassent{
+                                price,_ :=strconv.ParseFloat(params["mhtOrderAmt"], 64)
+                                price=price/100
+                                hassent=true
+                                go SendBillComfirm(user.Email, user.Username, orderId, price)
+                            }
+                            go SendAccountDetail(user.Email, user.Username, server.Ip, account.Port, account.Password, "rc4-md5")
+                        }
+    
                         server.Have++
                         models.UpdateServerById(server)
                         fmt.Println("ContainerID: ", con.Con.Containerid)

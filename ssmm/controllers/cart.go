@@ -180,6 +180,7 @@ func (c *CartController) PlaceOrder() {
 	for _, item := range itemss {
 		totalprice += item.Price
 	}
+	var username, email string
 	ipindex:=strings.Index(c.Ctx.Request.RemoteAddr,":")
 	if user == nil {
 		//判断是登录还是注册
@@ -196,7 +197,7 @@ func (c *CartController) PlaceOrder() {
 		if isnew {
 			//注册
 			var user models.User
-			email := c.GetString("email1")
+			email = c.GetString("email1")
 			pass := c.GetString("password1")
 			if len(email) <= 8 || len(pass) <= 4 {
 				c.Data["haserror"] = true
@@ -221,7 +222,7 @@ func (c *CartController) PlaceOrder() {
 			}
 			firstname := c.GetString("firstname")
 			lastname := c.GetString("lastname")
-			username := firstname + lastname
+			username = firstname + lastname
 			user.Email = email
 			user.Username = username
 			user.Password = pass
@@ -244,6 +245,8 @@ func (c *CartController) PlaceOrder() {
 				c.TplNames = "cartview-dev.html"
 				return
 			}
+			//发邮件
+			go SendWelcome(email,username,pass)
 			//添加session,cookie
 			c.SetSession("email", email)
 			c.SetSession("uid", uid)
@@ -253,7 +256,7 @@ func (c *CartController) PlaceOrder() {
 			c.Ctx.SetCookie("password", pass)
 		} else {
 			//登录
-			email := c.GetString("username")
+			email = c.GetString("username")
 			pass := c.GetString("password")
 			if len(email) <= 8 || len(pass) <= 4 {
 				c.Data["haserror"] = true
@@ -264,7 +267,8 @@ func (c *CartController) PlaceOrder() {
 				c.TplNames = "cartview-dev.html"
 				return
 			}
-			uid, username, err := verifyLogin(email, pass)
+			uid, usern, err := verifyLogin(email, pass)
+			username=usern
 			if err != nil {
 				c.Data["haserror"] = true
 				c.Data["error"] = err.Error()
@@ -283,6 +287,10 @@ func (c *CartController) PlaceOrder() {
 		}
 	} else {
 		userid = user.(int)
+		emailtmp := c.GetSession("email")
+		usertmp := c.GetSession("username")
+		email,_=emailtmp.(string)
+		username,_=usertmp.(string)
 	}
 	//要付款总价
 	var total float64
@@ -329,6 +337,10 @@ func (c *CartController) PlaceOrder() {
 		total += item.Price
 
 	}
+	//发邮件
+	now :=time.Now()
+	go SendBillInfo(email,username,billingids,total,now.Format("2006-01-02"),now.AddDate(0, 0, 5).Format("2006-01-02"))
+
 	c.SetSession("cartitems", nil)
 	//c.Redirect("/cart/view", 302)
 	c.Data["total"] = total
