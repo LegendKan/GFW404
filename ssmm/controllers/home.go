@@ -36,3 +36,12 @@ type TosController struct {
 func (this *TosController) Get() {
 	this.TplNames = "tos.html"
 }
+
+type AboutController struct {
+	baseController
+}
+
+func (this *AboutController) Get() {
+	this.Data["IsAbout"] = true
+	this.TplNames = "about.html"
+}

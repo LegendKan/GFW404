@@ -74,6 +74,7 @@ func init() {
 	beego.Router("/downloads", &controllers.DownloadsController{})
 	beego.Router("/tutorial", &controllers.TutorialController{})
 	beego.Router("/tos", &controllers.TosController{})
+	beego.Router("/about", &controllers.AboutController{})
 
 	beego.Router("/api/server", &controllers.ServerController{}, "post:Post")
 	beego.Router("/api/updateacc", &controllers.AccountController{}, "post:Update")
