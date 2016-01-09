@@ -28,6 +28,7 @@ func erverdayFunc() {
         fmt.Println(err)
         return
     }
+    go SendAdmin(len(accounts),"")
     now := time.Now()
     for _, v:=range accounts{
         duration:= v.Expiretime.Sub(now)
@@ -58,21 +59,41 @@ func erverdayFunc() {
         }else if days>-5{
             //stop
             //获取server信息
+            fmt.Println("Try to stop "+v.Containerid)
             s, err:=models.GetServerById(v.Serverid.Id)
             if err!=nil {
                 continue
             }
-            StopContainer(s.Ip, s.Port, s.Auth, v.Containerid)
+            msg, err1:=StopContainer(s.Ip, s.Port, s.Auth, v.Containerid)
+            if err1==nil && msg.Status {
+                fmt.Println("Stop "+v.Containerid+" successfully")
+                v.Active=2
+                if models.UpdateAccountById(&v)!=nil{
+                    fmt.Println("Fail to update database")
+                }
+            } else {
+                fmt.Println("Fail to top "+v.Containerid)
+            }
             //发邮件提醒
 
         }else{
             //delete并设置bill无效
             //获取server信息
+            fmt.Println("Try to delete "+v.Containerid)
             s, err:=models.GetServerById(v.Serverid.Id)
             if err!=nil {
                 continue
             }
-            DeleteContainer(s.Ip, s.Port, s.Auth, v.Containerid)
+            msg, err1:=DeleteContainer(s.Ip, s.Port, s.Auth, v.Containerid)
+            if err1==nil && msg.Status {
+                fmt.Println("Delete "+v.Containerid+" successfully")
+                v.Active=3
+                if models.UpdateAccountById(&v)!=nil{
+                    fmt.Println("Fail to update database")
+                }
+            } else {
+                fmt.Println("Fail to delete "+v.Containerid+" successfully")
+            }
             b, found :=models.GetUnpaidBillByAccount(v)
             if found {
                 b.Active=0

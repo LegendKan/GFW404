@@ -208,7 +208,7 @@ func GetAllActiveAccountNew() ([]Account, error) {
 	o := orm.NewOrm()
 	var accounts []Account
 	num, err := o.QueryTable("account").Filter("active", 1).All(&accounts)
-	fmt.Printf("Returned Rows Num: %s, %s", num, err)
+	fmt.Printf("Returned Rows Num: %d, %s\n", num, err)
 	return accounts, err
 }
 

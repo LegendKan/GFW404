@@ -39,6 +39,7 @@ func initEmail() {
 	Emailuser = beego.AppConfig.String("email::emailuser")
 	Emailpass = beego.AppConfig.String("email::emailpass")
 	Smtp = beego.AppConfig.String("email::smtp")
+	Adminemail = beego.AppConfig.String("email::adminemail")
 	Domain = beego.AppConfig.String("domain")
 }
 
@@ -88,4 +89,5 @@ func InitApp() {
 	initLocales()
 	initEmail()
 	settingCompress()
+	StartTimer()
 }

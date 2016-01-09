@@ -6,7 +6,7 @@ import (
 	"strconv"
 )
 
-var Emailuser, Emailpass, Smtp, Domain string
+var Emailuser, Emailpass, Smtp, Domain, Adminemail string
 
 func SendToMail(user, password, host, to, subject, body, mailtype string) error {
 	hp := strings.Split(host, ":")
@@ -22,6 +22,27 @@ func SendToMail(user, password, host, to, subject, body, mailtype string) error 
 	send_to := strings.Split(to, ";")
 	err := smtp.SendMail(host, auth, user, send_to, msg)
 	return err
+}
+
+func SendAdmin(total int, msg string) bool {
+	body:=`Dear Admin,
+
+	There are `+strconv.Itoa(total)+` accounts in `+Domain+` now.
+
+	`+msg+`
+
+	Best Regards!
+	Have a nice day!
+	`
+	err := SendToMail(Emailuser, Emailpass, Smtp, Adminemail, "Service Statistics", body, "plain")
+	if err != nil {
+		fmt.Println("Send mail error!")
+		fmt.Println(err)
+		return false
+	} else {
+		fmt.Println("Send mail success!")
+		return true
+	}
 }
 
 //welcome
