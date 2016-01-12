@@ -51,8 +51,11 @@ func (c *CartController) CheckoutService() {
 		totalprice += item.Price
 	}
 	c.Data["total"] = totalprice
-	ipindex:=strings.Index(c.Ctx.Request.RemoteAddr,":")
-	c.Data["clientip"]=c.Ctx.Request.RemoteAddr[0:ipindex]
+	//origin ip
+	//ipindex:=strings.Index(c.Ctx.Request.RemoteAddr,":")
+	//c.Data["clientip"]=c.Ctx.Request.RemoteAddr[0:ipindex]
+	//get real ip from nginx
+	c.Data["clientip"]=c.Ctx.Request.Header.Get("X-Real-IP")
 	c.TplNames = "cartview-dev.html"
 }
 
