@@ -3,4 +3,3 @@ go get github.com/astaxie/beego
 go get github.com/beego/bee
 go get github.com/beego/i18n
 go get github.com/beego/compress
-go get github.com/pingplusplus/pingpp-go/pingpp

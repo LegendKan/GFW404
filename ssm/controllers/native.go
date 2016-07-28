@@ -49,7 +49,7 @@ func addPort(port, pass string) (bool, err) {
 	return true, nil
 }
 
-func stopPort(port string) bool, err {
+func stopPort(port string) (bool, err) {
 	fmt.Println("remove port "+port)
 	data := "remove: {\"server_port\":"+port+"}"
 	_, err = conn.Write([]byte(data))
@@ -81,7 +81,7 @@ func pintPort(port string) {
 	fmt.Println(ret)
 }
 
-func syncPorts(accounts []models.Account) bool{
+func SyncPorts(accounts []models.Account) bool{
 	fmt.Println("Start to Sync")
 	for _, v:=range accounts{
 		if v.Port>=MaxPort{
@@ -89,11 +89,11 @@ func syncPorts(accounts []models.Account) bool{
 		}
 		fmt.Println(MaxPort)
 		//根据状态该删的删掉，该添加的添加
-		if v.Status == 0 {
+		if v.Status == 1 {
 			addPort(strconv.Itoa(v.Port), v.Password)
-		} else if v.Status == 1 {
-			stopPort(strconv.Itoa(v.Port))
 		} else if v.Status == 2 {
+			stopPort(strconv.Itoa(v.Port))
+		} else if v.Status == 3 {
 			deletePort(strconv.Itoa(v.Port))
 		} else {
 			fmt.Println("Unknown Status")

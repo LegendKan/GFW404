@@ -58,7 +58,7 @@ func (c *ServerController) Post() {
 	        "Serverid": strconv.Itoa(server[0].Id),
 	        "Active":"1",
 	    }
-	    accounts,err:=models.GetAllActiveAccount(query1, fields1, sortby, order, offset, limit)
+	    accounts,err:=models.GetAllAccount(query1, fields1, sortby, order, offset, limit)
 	    if err!=nil{
 	    	c.Abort("500")
 	    }
@@ -70,6 +70,7 @@ func (c *ServerController) Post() {
 	    	tmp.Password=single.Password
 	    	tmp.Port=single.Port
 	    	tmp.Id=single.Id
+	    	tmp.Status=single.Active
 	    	simples=append(simples,tmp)
 	    }
 	    fmt.Println(simples)

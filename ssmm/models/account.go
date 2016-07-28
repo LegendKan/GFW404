@@ -30,6 +30,7 @@ type SimpleAccount struct {
 	Containerid     string
 	Port        	int
 	Password        string
+	Status			int
 }
 
 func init() {

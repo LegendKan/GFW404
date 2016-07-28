@@ -10,6 +10,12 @@ import (
 
 var lock sync.Mutex
 
+var Driver string
+
+func init(){
+	Driver=beego.AppConfig.String("driver")
+}
+
 type MainController struct {
 	beego.Controller
 }
@@ -56,35 +62,44 @@ func (c *AddController) Get() {
 		lock.Unlock()
 	}
 	r := make(map[string]interface{})
-	ss := make(map[string]string)
-	if ret, ok := AddContainer(port, pass); ok {
-		r["status"] = true
-		ss["server"] = serverAddr
-		ss["password"] = pass
-		ss["containerid"] = ret
-		if len(port) <= 0 {
-			//
-			ssconfig := InspectContainer(ret)
-			ssjson := make(map[string]interface{})
-			json.Unmarshal([]byte(ssconfig), &ssjson)
-			//tmp := ssjson.(map[string]interface{})
-			tmp1 := ssjson["NetworkSettings"]
-			tmp2 := tmp1.(map[string]interface{})
-			tmp3 := tmp2["Ports"]
-			tmp4 := tmp3.(map[string]interface{})
-			tmp5 := tmp4[innerPort+"/tcp"].([]interface{})
-			tmp6 := tmp5[0].(map[string]interface{})
-			//ss["port"] = tmp["HostConfig"]["PortBindings"][innerPort+"/tcp"][0]["HostPort"]
-			ss["port"] = tmp6["HostPort"].(string)
-
-		} else {
-			ss["port"] = port
+	if Driver=="native"{
+		ret, err:=addPort(port, pass)
+		r["status"] = ret
+		if !ret{
+			r["data"]="Error happens while adding"
 		}
-		r["data"] = ss
-	} else {
-		r["status"] = false
-		r["data"] = "Error"
+	}else{
+		ss := make(map[string]string)
+		if ret, ok := AddContainer(port, pass); ok {
+			r["status"] = true
+			ss["server"] = serverAddr
+			ss["password"] = pass
+			ss["containerid"] = ret
+			if len(port) <= 0 {
+				//
+				ssconfig := InspectContainer(ret)
+				ssjson := make(map[string]interface{})
+				json.Unmarshal([]byte(ssconfig), &ssjson)
+				//tmp := ssjson.(map[string]interface{})
+				tmp1 := ssjson["NetworkSettings"]
+				tmp2 := tmp1.(map[string]interface{})
+				tmp3 := tmp2["Ports"]
+				tmp4 := tmp3.(map[string]interface{})
+				tmp5 := tmp4[innerPort+"/tcp"].([]interface{})
+				tmp6 := tmp5[0].(map[string]interface{})
+				//ss["port"] = tmp["HostConfig"]["PortBindings"][innerPort+"/tcp"][0]["HostPort"]
+				ss["port"] = tmp6["HostPort"].(string)
+
+			} else {
+				ss["port"] = port
+			}
+			r["data"] = ss
+		} else {
+			r["status"] = false
+			r["data"] = "Error"
+		}
 	}
+	
 	b, _ := json.Marshal(r)
 	c.Ctx.WriteString(string(b))
 }
@@ -94,19 +109,29 @@ type StopController struct {
 }
 
 func (c *StopController) Get() {
-	cid := c.GetString("cid")
 	ret := make(map[string]interface{})
-	if len(cid) <= 0 {
-		ret["status"] = false
-		ret["data"] = "No Container ID"
-	} else {
-		if StopContainer(cid) {
-			ret["status"] = true
-		} else {
-			ret["status"] = false
+	if Driver=="native"{
+		port := c.GetString("port")
+		r, err:=stopPort(port)
+		ret["status"] = r
+		if !r{
 			ret["data"] = "Error happened while deleting"
 		}
+	}else{
+		cid := c.GetString("cid")
+		if len(cid) <= 0 {
+			ret["status"] = false
+			ret["data"] = "No Container ID"
+		} else {
+			if StopContainer(cid) {
+				ret["status"] = true
+			} else {
+				ret["status"] = false
+				ret["data"] = "Error happened while deleting"
+			}
+		}
 	}
+	
 	b, _ := json.Marshal(ret)
 	c.Ctx.WriteString(string(b))
 }
@@ -116,19 +141,24 @@ type DeleteController struct {
 }
 
 func (c *DeleteController) Get() {
-	cid := c.GetString("cid")
 	ret := make(map[string]interface{})
-	if len(cid) <= 0 {
-		ret["status"] = false
-		ret["data"] = "No Container ID"
-	} else {
-		if DeleteContainer(cid) {
-			ret["status"] = true
-		} else {
+	if Driver=="native"{
+
+	}else{
+		cid := c.GetString("cid")
+		if len(cid) <= 0 {
 			ret["status"] = false
-			ret["data"] = "Error happened while deleting"
+			ret["data"] = "No Container ID"
+		} else {
+			if DeleteContainer(cid) {
+				ret["status"] = true
+			} else {
+				ret["status"] = false
+				ret["data"] = "Error happened while deleting"
+			}
 		}
 	}
+	
 	b, _ := json.Marshal(ret)
 	c.Ctx.WriteString(string(b))
 }

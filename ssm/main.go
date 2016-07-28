@@ -31,7 +31,8 @@ func contactMaster() bool {
 	masterport, _ := beego.AppConfig.Int("httpport")
 	amount, _ := beego.AppConfig.Int("amount")
 	have, _ := beego.AppConfig.Int("have")
-	var server = models.Server{beego.AppConfig.String("server"), masterport, beego.AppConfig.String("passauth"), beego.AppConfig.String("location"),beego.AppConfig.String("title"),
+	driver := beego.AppConfig.String("driver")
+	var server = models.Server{beego.AppConfig.String("server"), masterport, beego.AppConfig.String("passauth"), driver, beego.AppConfig.String("location"),beego.AppConfig.String("title"),
 		beego.AppConfig.String("description"), amount, have}
 	b, err := json.Marshal(server)
 	if err != nil {
@@ -57,7 +58,11 @@ func contactMaster() bool {
     	fmt.Println("Raw Info:", string(body))
 		json.Unmarshal(body,&accounts)
 		fmt.Println(accounts)
-		controllers.SyncContainers(accounts)
+		if driver=="native" {
+			controllers.SyncPorts(accounts)
+		}else{
+			controllers.SyncContainers(accounts)
+		}
 		return true
 	}
 

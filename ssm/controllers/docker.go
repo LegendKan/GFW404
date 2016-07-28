@@ -131,6 +131,9 @@ func SyncContainers(accounts []models.Account) bool{
 			MaxPort=v.Port+1
 		}
 		fmt.Println(MaxPort)
+		if v.Status!=1{
+			continue
+		}
 		for _, con:=range containers{
 			if con.Id==v.Containerid{
 				has=true

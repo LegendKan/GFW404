@@ -14,6 +14,7 @@ type Server struct {
 	Ip          string  `orm:"column(ip);size(255)"`
 	Port        int     `orm:"column(port)"`
 	Auth        string  `orm:"column(auth);size(255)"`
+	Driver		string	`orm:"column(driver):size(32)"`
 	Location    string  `orm:"column(location);size(255);null"`
 	Title       string  `orm:"column(title);size(255);null"`
 	Description string  `orm:"column(description);size(255);null"`
