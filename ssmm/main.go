@@ -32,7 +32,7 @@ func initialize() {
 }
 
 func init() {
-	orm.RegisterDataBase("default", "mysql", "root:LoveWYN1008@tcp(107.182.177.241:3306)/shadowsocks")
+	orm.RegisterDataBase("default", "mysql", "root:Legend@GFW404@tcp(192.210.219.20:3306)/shadowsocks")
 }
 
 func main() {

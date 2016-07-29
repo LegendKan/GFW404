@@ -265,7 +265,7 @@ func (c *PayNowController) Callback() {
                                 hassent=true
                                 go SendBillComfirm(user.Email, user.Username, orderId, price)
                             }
-                            go SendAccountDetail(user.Email, user.Username, server.Ip, account.Port, account.Password, "rc4-md5")
+                            go SendAccountDetail(user.Email, user.Username, server.Ip, account.Port, account.Password, "aes-256-cfb")
                         }
     
                         server.Have++

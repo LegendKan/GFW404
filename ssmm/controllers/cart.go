@@ -18,6 +18,7 @@ type CartItem struct {
 	Cycle  int8
 	Price  float64
 	CartID int
+	Password string
 }
 
 func (c *CartController) ConfService() {
@@ -64,6 +65,7 @@ func (c *CartController) AddService() {
 	//this.Data["Title"] = "产品与服务"
 	serviceid, _ := c.GetInt("serviceid")
 	cycle := c.GetString("billingcycle")
+	password := c.GetString("password")
 	server, err := models.GetServerById(serviceid)
 	if err != nil || server.Isonline == 0 || server.Amount-server.Have <= 0 {
 		c.Abort("404")
@@ -86,7 +88,7 @@ func (c *CartController) AddService() {
 	}
 	itemss := items.([]CartItem)
 	count := len(itemss)
-	item := CartItem{server, cycletype, price, count}
+	item := CartItem{server, cycletype, price, count, password}
 	itemss = append(itemss, item)
 	c.SetSession("cartitems", itemss)
 	fmt.Println(serviceid, cycle, item.Server.Title)
@@ -314,7 +316,7 @@ func (c *CartController) PlaceOrder() {
 			exprietime = timenow.AddDate(1, 0, 0)
 			cyclestr="年付"
 		}
-		account := &models.Account{Serverid: item.Server, Userid: &models.User{Id: userid}, Cycle: item.Cycle, Expiretime: exprietime, Firstprice: item.Price, Recurringprice: item.Price}
+		account := &models.Account{Serverid: item.Server, Password: item.Password, Userid: &models.User{Id: userid}, Cycle: item.Cycle, Expiretime: exprietime, Firstprice: item.Price, Recurringprice: item.Price}
 		aid, err := models.AddAccount(account)
 		if err != nil {
 			c.Data["haserror"] = true
