@@ -68,11 +68,17 @@ func (c *AddController) Get() {
 		if !ret{
 			r["data"]="Error happens while adding"
 		}
+		ss := make(map[string]string)
+		ss["server"] = beego.AppConfig.String("server")
+		ss["password"] = pass
+		ss["containerid"] = "native"
+		ss["port"] = port
+		r["data"] = ss
 	}else{
 		ss := make(map[string]string)
 		if ret, ok := AddContainer(port, pass); ok {
 			r["status"] = true
-			ss["server"] = serverAddr
+			ss["server"] = beego.AppConfig.String("server")
 			ss["password"] = pass
 			ss["containerid"] = ret
 			if len(port) <= 0 {

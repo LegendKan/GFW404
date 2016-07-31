@@ -129,7 +129,7 @@ func (c *PayNowController) PayResult() {
     }
 
     c.Data["payresult"] = payresult
-    c.TplNames = "payresult.html"
+    c.TplName = "payresult.html"
 }
 
 func Verify(params map[string]string, secret string) bool {
@@ -241,10 +241,10 @@ func (c *PayNowController) Callback() {
                 if server, err := models.GetServerById(serverid.Id); err == nil {
                     //获取创建必要的信息IP,port, pass
                     ip := server.Ip
-                    port := server.Port
-                    pass := server.Auth
+                    // port := server.Port
+                    // pass := server.Auth
                     //发起get(post)请求去创建
-                    con, err := createContainer(ip, port, pass)
+                    con, err := createContainer(server, account.Password)
                     //mt.Println(con)
                     if err != nil {
                         fmt.Println(orderId+"Create Container Error: ", err)
@@ -295,9 +295,9 @@ func (c *PayNowController) Callback() {
     c.Ctx.WriteString("success=Y")
 }
 
-func createContainer(ip string, port int, auth string) (RetContainer, error) {
+func createContainer(server *models.Server, password string) (RetContainer, error) {
     var con RetContainer
-    resp, err := http.Get("http://" + ip + ":" + strconv.Itoa(port) + "/docker/add?auth="+auth)
+    resp, err := http.Get("http://" + server.Ip + ":" + strconv.Itoa(server.Port) + "/docker/add?auth="+server.Auth+"&pass="+password)
     if err != nil {
         return con, err
     }

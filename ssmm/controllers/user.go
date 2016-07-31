@@ -37,7 +37,7 @@ func (c *UserController) Post() {
 	} else {
 		c.Data["json"] = err.Error()
 	}
-	c.ServeJson()
+	c.ServeJSON()
 }
 
 // @Title Get
@@ -47,7 +47,7 @@ func (c *UserController) Post() {
 // @Failure 403 :id is empty
 // @router /:id [get]
 func (c *UserController) GetOne() {
-	idStr := c.Ctx.Input.Params[":id"]
+	idStr := c.Ctx.Input.Param(":id")
 	id, _ := strconv.Atoi(idStr)
 	v, err := models.GetUserById(id)
 	if err != nil {
@@ -55,7 +55,7 @@ func (c *UserController) GetOne() {
 	} else {
 		c.Data["json"] = v
 	}
-	c.ServeJson()
+	c.ServeJSON()
 }
 
 // @Title Get All
@@ -103,7 +103,7 @@ func (c *UserController) GetAll() {
 			kv := strings.Split(cond, ":")
 			if len(kv) != 2 {
 				c.Data["json"] = errors.New("Error: invalid query key/value pair")
-				c.ServeJson()
+				c.ServeJSON()
 				return
 			}
 			k, v := kv[0], kv[1]
@@ -117,7 +117,7 @@ func (c *UserController) GetAll() {
 	} else {
 		c.Data["json"] = l
 	}
-	c.ServeJson()
+	c.ServeJSON()
 }
 
 // @Title Update
@@ -128,7 +128,7 @@ func (c *UserController) GetAll() {
 // @Failure 403 :id is not int
 // @router /:id [put]
 func (c *UserController) Put() {
-	idStr := c.Ctx.Input.Params[":id"]
+	idStr := c.Ctx.Input.Param(":id")
 	id, _ := strconv.Atoi(idStr)
 	v := models.User{Id: id}
 	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
@@ -137,7 +137,7 @@ func (c *UserController) Put() {
 	} else {
 		c.Data["json"] = err.Error()
 	}
-	c.ServeJson()
+	c.ServeJSON()
 }
 
 // @Title Delete
@@ -147,12 +147,12 @@ func (c *UserController) Put() {
 // @Failure 403 id is empty
 // @router /:id [delete]
 func (c *UserController) Delete() {
-	idStr := c.Ctx.Input.Params[":id"]
+	idStr := c.Ctx.Input.Param(":id")
 	id, _ := strconv.Atoi(idStr)
 	if err := models.DeleteUser(id); err == nil {
 		c.Data["json"] = "OK"
 	} else {
 		c.Data["json"] = err.Error()
 	}
-	c.ServeJson()
+	c.ServeJSON()
 }

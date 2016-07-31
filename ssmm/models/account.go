@@ -3,7 +3,6 @@ package models
 import (
 	"errors"
 	"fmt"
-	"reflect"
 	"strings"
 	"time"
 	"strconv"
@@ -73,7 +72,7 @@ func GetAccountDetailById(id int) (v orm.Params, err error) {
 // GetAllAccount retrieves all Account matches certain condition. Returns empty list if
 // no records exist
 func GetAllAccount(query map[string]string, fields []string, sortby []string, order []string,
-	offset int64, limit int64) (ml []interface{}, err error) {
+	offset int64, limit int64) (l []Account, err error) {
 	o := orm.NewOrm()
 	qs := o.QueryTable(new(Account))
 	// query k=v
@@ -121,25 +120,10 @@ func GetAllAccount(query map[string]string, fields []string, sortby []string, or
 		}
 	}
 
-	var l []Account
+	//var l []Account
 	qs = qs.OrderBy(sortFields...)
 	if _, err := qs.Limit(limit, offset).All(&l, fields...); err == nil {
-		if len(fields) == 0 {
-			for _, v := range l {
-				ml = append(ml, v)
-			}
-		} else {
-			// trim unused fields
-			for _, v := range l {
-				m := make(map[string]interface{})
-				val := reflect.ValueOf(v)
-				for _, fname := range fields {
-					m[fname] = val.FieldByName(fname).Interface()
-				}
-				ml = append(ml, m)
-			}
-		}
-		return ml, nil
+		return l, nil
 	}
 	return nil, err
 }

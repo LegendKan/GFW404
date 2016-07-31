@@ -9,6 +9,14 @@
 	<div class="row">
 		<div class="col-md-12">
 			<div class="box">
+				<script>
+				function check(){
+					if(jQuery("input[name='password']").val().length<=5){
+						alert("服务密码至少6位！");
+						return false;
+					}
+				}
+				</script>
 				<div class="cell slim page-box markdown">
 					<div id="order-cart">
 
@@ -16,7 +24,7 @@
 
 						<p>您选择的产品/服务有以下配置选项供您选择.</p>
 
-						<form method="post" action="/cart/add">
+						<form method="post" action="/cart/add" onsubmit="return check()">
 						<input type="hidden" name="token" value="b9bc76d76721035b4f3be971de0900faf45c4a82" />
 						<input type="hidden" name="configure" value="true">
 
@@ -29,7 +37,7 @@
 						<input type="hidden" name="previousbillingcycle" value="annually" />
 						<input type="hidden" name="serviceid" value="{{.service.Id}}" />
 						<p class="cartsubheading">账单周期</p>
-						<div class="cartbox"><select name="billingcycle" onchange="submit()">
+						<div class="cartbox"><select name="billingcycle" > <!-- onchange="submit()" -->
 						<option value="monthly" selected="selected">￥{{.service.Month}} RMB 月付</option><option value="quarterly">￥{{.service.Quarter}} RMB 季付</option><option value="yearly">￥{{.service.Year}} RMB 年付</option></select>
 						</div>
 						<p class="cartsubheading">服务密码</p>

@@ -34,7 +34,7 @@ func (c *CartController) ConfService() {
 	server.Description = strings.Replace(server.Description, "|", "<br />", -1)
 	c.Data["service"] = server
 	c.Data["IsService"] = true
-	c.TplNames = "confproduct.html"
+	c.TplName = "confproduct.html"
 }
 
 func (c *CartController) CheckoutService() {
@@ -57,7 +57,7 @@ func (c *CartController) CheckoutService() {
 	//c.Data["clientip"]=c.Ctx.Request.RemoteAddr[0:ipindex]
 	//get real ip from nginx
 	c.Data["clientip"]=c.Ctx.Request.Header.Get("X-Real-IP")
-	c.TplNames = "cartview-dev.html"
+	c.TplName = "cartview-dev.html"
 }
 
 func (c *CartController) AddService() {
@@ -127,7 +127,7 @@ func (c *CartController) DeleteService() {
 	// c.Data["cartitems"] = itemss
 	// c.Data["total"] = totalprice
 	// c.Data["clientip"]=c.Ctx.Request.RemoteAddr[0:ipindex]
-	// c.TplNames = "cartview-dev.html"
+	// c.TplName = "cartview-dev.html"
 	c.Redirect("/cart/view", 302)
 }
 
@@ -140,7 +140,7 @@ func (c *CartController) ClearService() {
 func (c *CartController) ViewService() {
 	c.Data["IsService"] = true
 	//this.Data["Title"] = "产品与服务"
-	c.TplNames = "cart.html"
+	c.TplName = "cart.html"
 }
 
 func (c *CartController) PromoteFilter() {
@@ -165,7 +165,7 @@ func (c *CartController) PromoteFilter() {
 	c.Data["cartitems"] = itemss
 	c.Data["total"] = totalprice
 	c.Data["clientip"]=c.Ctx.Request.RemoteAddr[0:ipindex]
-	c.TplNames = "cartview-dev.html"
+	c.TplName = "cartview-dev.html"
 }
 
 func (c *CartController) PlaceOrder() {
@@ -196,7 +196,7 @@ func (c *CartController) PlaceOrder() {
 			c.Data["cartitems"] = itemss
 			c.Data["total"] = totalprice
 			c.Data["clientip"]=c.Ctx.Request.RemoteAddr[0:ipindex]
-			c.TplNames = "cartview-dev.html"
+			c.TplName = "cartview-dev.html"
 			return
 		}
 		if isnew {
@@ -210,7 +210,7 @@ func (c *CartController) PlaceOrder() {
 				c.Data["cartitems"] = itemss
 				c.Data["total"] = totalprice
 				c.Data["clientip"]=c.Ctx.Request.RemoteAddr[0:ipindex]
-				c.TplNames = "cartview-dev.html"
+				c.TplName = "cartview-dev.html"
 				//c.Render()
 				return
 			}
@@ -222,7 +222,7 @@ func (c *CartController) PlaceOrder() {
 				c.Data["cartitems"] = itemss
 				c.Data["total"] = totalprice
 				c.Data["clientip"]=c.Ctx.Request.RemoteAddr[0:ipindex]
-				c.TplNames = "cartview-dev.html"
+				c.TplName = "cartview-dev.html"
 				return
 			}
 			firstname := c.GetString("firstname")
@@ -247,7 +247,7 @@ func (c *CartController) PlaceOrder() {
 				c.Data["cartitems"] = itemss
 				c.Data["total"] = totalprice
 				c.Data["clientip"]=c.Ctx.Request.RemoteAddr[0:ipindex]
-				c.TplNames = "cartview-dev.html"
+				c.TplName = "cartview-dev.html"
 				return
 			}
 			//发邮件
@@ -269,7 +269,7 @@ func (c *CartController) PlaceOrder() {
 				c.Data["cartitems"] = itemss
 				c.Data["total"] = totalprice
 				c.Data["clientip"]=c.Ctx.Request.RemoteAddr[0:ipindex]
-				c.TplNames = "cartview-dev.html"
+				c.TplName = "cartview-dev.html"
 				return
 			}
 			uid, usern, err := verifyLogin(email, pass)
@@ -280,7 +280,7 @@ func (c *CartController) PlaceOrder() {
 				c.Data["cartitems"] = itemss
 				c.Data["total"] = totalprice
 				c.Data["clientip"]=c.Ctx.Request.RemoteAddr[0:ipindex]
-				c.TplNames = "cartview-dev.html"
+				c.TplName = "cartview-dev.html"
 				return
 			}
 			c.SetSession("email", email)
@@ -324,7 +324,7 @@ func (c *CartController) PlaceOrder() {
 			c.Data["cartitems"] = itemss
 			c.Data["total"] = totalprice
 			c.Data["clientip"]=c.Ctx.Request.RemoteAddr[0:ipindex]
-			c.TplNames = "cartview-dev.html"
+			c.TplName = "cartview-dev.html"
 			return
 		}
 		billing := &models.Bill{Accountid: int(aid), Price: item.Price, Payno: billingids, Expiretime: timenow.AddDate(0, 0, 5)}
@@ -336,7 +336,7 @@ func (c *CartController) PlaceOrder() {
 			c.Data["cartitems"] = itemss
 			c.Data["total"] = totalprice
 			c.Data["clientip"]=c.Ctx.Request.RemoteAddr[0:ipindex]
-			c.TplNames = "cartview-dev.html"
+			c.TplName = "cartview-dev.html"
 			return
 		}
 		total += item.Price
@@ -356,11 +356,11 @@ func (c *CartController) PlaceOrder() {
 	flash.Store(&c.Controller)
 	//flash.Set("total", total)
 	//old for pingpp
-	//c.TplNames = "payonline.html"
+	//c.TplName = "payonline.html"
 	fmt.Println("I am here Catch me")
 	//ipaynow.cn paynow支付
 	params:=CreatePay(total,billingids,cyclestr+"Shadowsocks账号")
 	c.Data["params"] = params
-	c.TplNames = "paynow.html"
+	c.TplName = "paynow.html"
 	
 }

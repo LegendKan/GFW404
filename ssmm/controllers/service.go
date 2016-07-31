@@ -15,7 +15,7 @@ type ServiceController struct {
 func (this *ServiceController) Get() {
 	this.Data["IsService"] = true
 	this.Data["Title"] = "产品与服务"
-	this.TplNames = "service.html"
+	this.TplName = "service.html"
 }
 
 func (c *ServiceController) GetActive() {
@@ -41,5 +41,5 @@ func (c *ServiceController) GetActive() {
 	c.Data["services"] = l
 	c.Data["Title"] = "服务与产品"
 	c.Data["IsService"] = true
-	c.TplNames = "service.html"
+	c.TplName = "service.html"
 }

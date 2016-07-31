@@ -8,7 +8,7 @@ type HomeController struct {
 // Get implemented Get method for HomeRouter.
 func (this *HomeController) Get() {
 	this.Data["IsHome"] = true
-	this.TplNames = "home.html"
+	this.TplName = "home.html"
 }
 
 type DownloadsController struct {
@@ -17,7 +17,7 @@ type DownloadsController struct {
 
 func (this *DownloadsController) Get() {
 	this.Data["IsDownload"] = true
-	this.TplNames = "downloads.html"
+	this.TplName = "downloads.html"
 }
 
 type TutorialController struct {
@@ -26,7 +26,7 @@ type TutorialController struct {
 
 func (this *TutorialController) Get() {
 	this.Data["IsQuickStart"] = true
-	this.TplNames = "tutorial.html"
+	this.TplName = "tutorial.html"
 }
 
 type TosController struct {
@@ -34,7 +34,7 @@ type TosController struct {
 }
 
 func (this *TosController) Get() {
-	this.TplNames = "tos.html"
+	this.TplName = "tos.html"
 }
 
 type AboutController struct {
@@ -43,5 +43,5 @@ type AboutController struct {
 
 func (this *AboutController) Get() {
 	this.Data["IsAbout"] = true
-	this.TplNames = "about.html"
+	this.TplName = "about.html"
 }

@@ -3,7 +3,6 @@ package main
 import (
 	"os"
 	"ssmm/controllers"
-	_ "ssmm/docs"
 	_ "ssmm/routers"
 
 	"github.com/astaxie/beego"
@@ -21,7 +20,7 @@ const (
 // and we cannot make sure that which init() execute first.
 func initialize() {
 
-	controllers.IsPro = beego.RunMode == "prod"
+	controllers.IsPro = beego.BConfig.RunMode == "prod"
 	if controllers.IsPro {
 		beego.SetLevel(beego.LevelInformational)
 		os.Mkdir("./log", os.ModePerm)
@@ -36,14 +35,14 @@ func init() {
 }
 
 func main() {
-	if beego.RunMode == "dev" {
-		beego.DirectoryIndex = true
-		beego.StaticDir["/swagger"] = "swagger"
+	if beego.BConfig.RunMode == "dev" {
+		// beego.BConfig.WebConfig.DirectoryIndex = true
+		// beego.StaticDir["/swagger"] = "swagger"
 	}
 	initialize()
 	if !controllers.IsPro {
 		beego.SetStaticPath("/static_source", "static_source")
-		beego.DirectoryIndex = true
+		beego.BConfig.WebConfig.DirectoryIndex = true
 	}
 	// Register template functions.
 	beego.AddFuncMap("i18n", i18n.Tr)

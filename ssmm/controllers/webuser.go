@@ -12,7 +12,7 @@ type WebUserController struct {
 
 func (c *WebUserController) GetRegister() {
 	c.Data["IsUser"] = true
-	c.TplNames = "register.html"
+	c.TplName = "register.html"
 }
 
 func (c *WebUserController) Register() {
@@ -24,7 +24,7 @@ func (c *WebUserController) Register() {
 	if len(email) <= 8 || len(pass) <= 4 {
 		c.Data["haserror"] = true
 		c.Data["error"] = "请填写正确的邮箱、密码"
-		c.TplNames = "register.html"
+		c.TplName = "register.html"
 		//c.Render()
 		return
 	}
@@ -33,7 +33,7 @@ func (c *WebUserController) Register() {
 	if u != nil {
 		c.Data["haserror"] = true
 		c.Data["error"] = "邮箱已注册"
-		c.TplNames = "register.html"
+		c.TplName = "register.html"
 		return
 	}
 	firstname := c.GetString("firstname")
@@ -55,7 +55,7 @@ func (c *WebUserController) Register() {
 	if err != nil {
 		c.Data["haserror"] = true
 		c.Data["error"] = err.Error()
-		c.TplNames = "register.html"
+		c.TplName = "register.html"
 		return
 	}
 	go SendWelcome(email,username,pass)
@@ -93,12 +93,12 @@ func (c *WebUserController) GetHome() {
 	username := c.GetSession("username")
 	name,_:=username.(string)
 	c.Data["username"]=name
-	c.TplNames = "userhome.html"
+	c.TplName = "userhome.html"
 }
 
 func (c *WebUserController) GetLogin() {
 	c.Data["IsUser"] = true
-	c.TplNames = "login.html"
+	c.TplName = "login.html"
 }
 
 func (c *WebUserController) Logout() {
@@ -116,21 +116,21 @@ func (c *WebUserController) Login() {
 	if len(email) <= 8 || len(pass) <= 4 {
 		c.Data["haserror"] = true
 		c.Data["error"] = "请填写正确的邮箱、密码"
-		c.TplNames = "login.html"
+		c.TplName = "login.html"
 		return
 	}
 	// u, _ := models.GetUserByEmail(email)
 	// if u == nil || u.Password != pass {
 	// 	c.Data["haserror"] = true
 	// 	c.Data["error"] = "邮箱或密码错误"
-	// 	c.TplNames = "login.html"
+	// 	c.TplName = "login.html"
 	// 	return
 	// }
 	uid, username, err := verifyLogin(email, pass)
 	if err != nil {
 		c.Data["haserror"] = true
 		c.Data["error"] = err.Error()
-		c.TplNames = "login.html"
+		c.TplName = "login.html"
 		return
 	}
 	c.SetSession("email", email)
@@ -163,18 +163,18 @@ func (c *WebUserController) GetDetail() {
 		return
 	}
 
-	idStr := c.Ctx.Input.Params[":id"]
+	idStr := c.Ctx.Input.Param(":id")
 	id, err1 := strconv.Atoi(idStr)
 	if err1!=nil {
 		c.Data["error"] = "参数出错了！"
-		c.TplNames = "error.html"
+		c.TplName = "error.html"
 		return
 	}
 
 	v, err := models.GetAccountDetailById(id)
 	if err != nil {
 		c.Data["error"] = err.Error()
-		c.TplNames = "error.html"
+		c.TplName = "error.html"
 		return
 	} else {
 		//验证用户信息
@@ -189,26 +189,26 @@ func (c *WebUserController) GetDetail() {
 			c.Data["password"] = v["password"]
 		}	
 	}
-	c.TplNames = "accountdetail.html"
+	c.TplName = "accountdetail.html"
 }
 
 func (c *WebUserController) PayBill(){
 	c.Data["IsUser"] = true
-	idStr := c.Ctx.Input.Params[":id"]
+	idStr := c.Ctx.Input.Param(":id")
 	id, err1 := strconv.Atoi(idStr)
 	if err1!=nil{
 		c.Data["error"] = "参数出错了！"
-		c.TplNames = "error.html"
+		c.TplName = "error.html"
 		return
 	}
 	b,err:=models.GetBillById(id)
 	if err!=nil {
 		c.Data["error"] = "出错了！"
-		c.TplNames = "error.html"
+		c.TplName = "error.html"
 		return
 	}
 	params:=CreatePay(b.Price,b.Payno,strconv.Itoa(b.Accountid)+"Shadowsocks账号")
 	c.Data["total"] = b.Price
 	c.Data["params"] = params
-	c.TplNames = "paynow.html"
+	c.TplName = "paynow.html"
 }

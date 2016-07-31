@@ -58,7 +58,7 @@ func (c *AccountController) Update() {
     	c.Abort("403")
     }
 	
-	c.ServeJson()
+	c.ServeJSON()
 }
 
 // @Title Post
@@ -75,7 +75,7 @@ func (c *AccountController) Post() {
 	} else {
 		c.Data["json"] = err.Error()
 	}
-	c.ServeJson()
+	c.ServeJSON()
 }
 
 // @Title Get
@@ -85,7 +85,7 @@ func (c *AccountController) Post() {
 // @Failure 403 :id is empty
 // @router /:id [get]
 func (c *AccountController) GetOne() {
-	idStr := c.Ctx.Input.Params[":id"]
+	idStr := c.Ctx.Input.Param(":id")
 	id, _ := strconv.Atoi(idStr)
 	v, err := models.GetAccountById(id)
 	if err != nil {
@@ -93,7 +93,7 @@ func (c *AccountController) GetOne() {
 	} else {
 		c.Data["json"] = v
 	}
-	c.ServeJson()
+	c.ServeJSON()
 }
 
 
@@ -142,7 +142,7 @@ func (c *AccountController) GetAll() {
 			kv := strings.Split(cond, ":")
 			if len(kv) != 2 {
 				c.Data["json"] = errors.New("Error: invalid query key/value pair")
-				c.ServeJson()
+				c.ServeJSON()
 				return
 			}
 			k, v := kv[0], kv[1]
@@ -156,7 +156,7 @@ func (c *AccountController) GetAll() {
 	} else {
 		c.Data["json"] = l
 	}
-	c.ServeJson()
+	c.ServeJSON()
 }
 
 // @Title Update
@@ -167,7 +167,7 @@ func (c *AccountController) GetAll() {
 // @Failure 403 :id is not int
 // @router /:id [put]
 func (c *AccountController) Put() {
-	idStr := c.Ctx.Input.Params[":id"]
+	idStr := c.Ctx.Input.Param(":id")
 	id, _ := strconv.Atoi(idStr)
 	v := models.Account{Id: id}
 	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
@@ -176,7 +176,7 @@ func (c *AccountController) Put() {
 	} else {
 		c.Data["json"] = err.Error()
 	}
-	c.ServeJson()
+	c.ServeJSON()
 }
 
 // @Title Delete
@@ -186,12 +186,12 @@ func (c *AccountController) Put() {
 // @Failure 403 id is empty
 // @router /:id [delete]
 func (c *AccountController) Delete() {
-	idStr := c.Ctx.Input.Params[":id"]
+	idStr := c.Ctx.Input.Param(":id")
 	id, _ := strconv.Atoi(idStr)
 	if err := models.DeleteAccount(id); err == nil {
 		c.Data["json"] = "OK"
 	} else {
 		c.Data["json"] = err.Error()
 	}
-	c.ServeJson()
+	c.ServeJSON()
 }
