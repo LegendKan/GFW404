@@ -22,6 +22,7 @@ type Account struct {
 	Active      int8      `orm:"column(active)"`
 	Firstprice	float64   `orm:"column(firstprice);null;digits(12);decimals(2)"`
 	Recurringprice float64 `orm:"column(recurringprice);null;digits(12);decimals(2)"`
+	Couponid       int       `orm:"column(couponid)"`
 }
 
 type SimpleAccount struct {

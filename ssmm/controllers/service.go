@@ -37,7 +37,7 @@ func (c *ServiceController) GetActive() {
 		//server.Description = tmp
 		fmt.Println(l[i].Description)
 	}
-	fmt.Println(l[0].Description)
+	//fmt.Println(l[0].Description)
 	c.Data["services"] = l
 	c.Data["Title"] = "服务与产品"
 	c.Data["IsService"] = true

@@ -155,13 +155,22 @@ func (c *CartController) PromoteFilter() {
 		c.Redirect("/service", 302)
 		return
 	}
+	
+	couponCode := c.GetString("couponcode")
+	if len(couponCode)<=0{
+		c.Redirect("/service", 302)
+		return
+	}
 	var totalprice float64
+	coupon, _ := models.GetCouponByCode(couponCode)
+	if coupon == nil{
+		c.Data["haserror"] = true
+		c.Data["error"] = "所填写优惠码不存在！"
+	}
 	for _, item := range itemss {
 		totalprice += item.Price
 	}
 	ipindex:=strings.Index(c.Ctx.Request.RemoteAddr,":")
-	c.Data["haserror"] = true
-	c.Data["error"] = "所填写优惠码不存在！"
 	c.Data["cartitems"] = itemss
 	c.Data["total"] = totalprice
 	c.Data["clientip"]=c.Ctx.Request.RemoteAddr[0:ipindex]
