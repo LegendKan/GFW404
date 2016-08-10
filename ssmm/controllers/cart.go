@@ -17,6 +17,7 @@ type CartItem struct {
 	Server *models.Server
 	Cycle  int8
 	Price  float64
+	RecurringPrice float64
 	CartID int
 	Password string
 }
@@ -88,7 +89,7 @@ func (c *CartController) AddService() {
 	}
 	itemss := items.([]CartItem)
 	count := len(itemss)
-	item := CartItem{server, cycletype, price, count, password}
+	item := CartItem{server, cycletype, price, price, count, password}
 	itemss = append(itemss, item)
 	c.SetSession("cartitems", itemss)
 	fmt.Println(serviceid, cycle, item.Server.Title)
@@ -143,6 +144,23 @@ func (c *CartController) ViewService() {
 	c.TplName = "cart.html"
 }
 
+func stringInSlice(a string, list []string) bool {
+    for _, b := range list {
+        if b == a {
+            return true
+        }
+    }
+    return false
+}
+
+func calTotalPrice(itemss []CartItem) float64 {
+	totalprice float64
+	for _, item := range itemss {
+		totalprice += item.Price
+	}
+	return totalprice
+}
+
 func (c *CartController) PromoteFilter() {
 	c.Data["IsService"] = true
 	items := c.GetSession("cartitems")
@@ -161,18 +179,57 @@ func (c *CartController) PromoteFilter() {
 		c.Redirect("/service", 302)
 		return
 	}
-	var totalprice float64
+	var totalprice, recurringprice float64
 	coupon, _ := models.GetCouponByCode(couponCode)
 	if coupon == nil{
 		c.Data["haserror"] = true
 		c.Data["error"] = "所填写优惠码不存在！"
+		for _, item := range itemss {
+			totalprice += item.Price
+		}
+		recurringprice = totalprice
+	}else if coupon.Type != -1 && coupon.Usedtimes >= coupon.Totaltimes{
+		c.Data["haserror"] = true
+		c.Data["error"] = "优惠码使用达到上限！"
+		totalprice = calTotalPrice(itemss)
+		recurringprice = totalprice
+	}else if now := time.Now(); now.Before(coupon.Effecttime) || now.After(coupon.Expiretime){
+		c.Data["haserror"] = true
+		c.Data["error"] = "优惠码已过期或者尚未生效！"
+		totalprice = calTotalPrice(itemss)
+		recurringprice = totalprice
+	}else{
+		serverids = strings.Split(coupon.Serverids,"|")
+		for _, item := range itemss {
+			if (coupon.Serverids == "*" || stringInSlice(strconv.Itoa(item.Server.Id),serverids)) && (coupon.Cycle == 3 || item.Cycle == coupon.Cycle){
+				oldvalue := item.Price
+				if coupon.Type == 0 {
+					item.Price = item.Price * coupon.Content/100
+				}else if coupon.Type == 1{
+					item.Price -= coupon.Content
+				}else if coupon.Type ==2 {
+					item.Price = coupon.Content
+				}else{
+					item.Price = item.Price
+				}
+
+				if item.Price <=0 {
+					item.Price = oldvalue
+				}
+
+				if coupon.Recursion ==1{
+					item.RecurringPrice = item.Price
+				}
+			}
+			totalprice += item.Price
+			recurringprice += item.RecurringPrice
+		}
 	}
-	for _, item := range itemss {
-		totalprice += item.Price
-	}
+	
 	ipindex:=strings.Index(c.Ctx.Request.RemoteAddr,":")
 	c.Data["cartitems"] = itemss
 	c.Data["total"] = totalprice
+	c.Data["recurring"] = recurringprice
 	c.Data["clientip"]=c.Ctx.Request.RemoteAddr[0:ipindex]
 	c.TplName = "cartview-dev.html"
 }

@@ -115,10 +115,11 @@
 
 
 					<tr class="summary"><td class="textright">小计: &nbsp;</td><td class="textcenter">￥{{.total}} RMB</td></tr>
+					<tr class="summary"><td class="textright">折扣: &nbsp;</td><td class="textcenter">￥{{.total - .recurringprice}} RMB</td></tr>
 					<tr class="summary"><td class="textright">当前总计: &nbsp;</td><td class="textcenter">￥{{.total}} RMB</td></tr>
 					<tr class="summary"><td class="textright">下次付款总计: &nbsp;</td><td class="textcenter">
 					{{range .cartitems}}
-					￥{{.Price}} RMB - {{if eq .Cycle 1}}月付{{else if eq .Cycle 2}}季付{{else}}年付{{end}}<br />
+					￥{{.RecurringPrice}} RMB - {{if eq .Cycle 1}}月付{{else if eq .Cycle 2}}季付{{else}}年付{{end}}<br />
 					{{end}}
 					</td></tr>
 					</table>

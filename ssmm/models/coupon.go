@@ -14,6 +14,7 @@ type Coupon struct {
 	Id          int       `orm:"column(id);auto"`
 	Code        string    `orm:"column(code);size(32)"`
 	Description string    `orm:"column(description);size(255);null"`
+	Serverids 	string    `orm:"column(description);size(255)"`
 	Type        int8      `orm:"column(type)"`
 	Content     float64   `orm:"column(content);digits(10);decimals(0)"`
 	Cycle       int8      `orm:"column(cycle)"`
