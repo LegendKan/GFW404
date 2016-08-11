@@ -54,6 +54,11 @@ func GetCouponById(id int) (v *Coupon, err error) {
 	return nil, err
 }
 
+func UpdateCouponUsedById(id int) err error{
+	o := NewOrm()
+	_, err = o.Raw("UPDATE coupon SET usedtimes = usedtimes + 1 where id = ?", id).Exec()
+}
+
 func GetCouponByCode(code string)(v *Coupon, err error){
 	o := orm.NewOrm()
 	v = &Coupon{Code: code}

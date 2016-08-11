@@ -20,6 +20,7 @@ type CartItem struct {
 	RecurringPrice float64
 	CartID int
 	Password string
+	CouponId int
 }
 
 func (c *CartController) ConfService() {
@@ -89,7 +90,7 @@ func (c *CartController) AddService() {
 	}
 	itemss := items.([]CartItem)
 	count := len(itemss)
-	item := CartItem{server, cycletype, price, price, count, password}
+	item := CartItem{server, cycletype, price, price, count, password, -1}
 	itemss = append(itemss, item)
 	c.SetSession("cartitems", itemss)
 	fmt.Println(serviceid, cycle, item.Server.Title)
@@ -220,6 +221,8 @@ func (c *CartController) PromoteFilter() {
 				if coupon.Recursion ==1{
 					item.RecurringPrice = item.Price
 				}
+
+				item.CouponId = coupon.Id
 			}
 			totalprice += item.Price
 			recurringprice += item.RecurringPrice
@@ -370,6 +373,7 @@ func (c *CartController) PlaceOrder() {
 	timenow := time.Now()
 	var exprietime time.Time
 	var cyclestr string
+	var couponNum int
 	for _, item := range itemss {
 		//创建服务和账单
 		if item.Cycle == 1 {
@@ -382,7 +386,7 @@ func (c *CartController) PlaceOrder() {
 			exprietime = timenow.AddDate(1, 0, 0)
 			cyclestr="年付"
 		}
-		account := &models.Account{Serverid: item.Server, Password: item.Password, Userid: &models.User{Id: userid}, Cycle: item.Cycle, Expiretime: exprietime, Firstprice: item.Price, Recurringprice: item.Price}
+		account := &models.Account{Serverid: item.Server, Password: item.Password, Userid: &models.User{Id: userid}, Cycle: item.Cycle, Expiretime: exprietime, Firstprice: item.Price, Recurringprice: item.RecurringPrice, Couponid: item.CouponId}
 		aid, err := models.AddAccount(account)
 		if err != nil {
 			c.Data["haserror"] = true
@@ -407,7 +411,19 @@ func (c *CartController) PlaceOrder() {
 		}
 		total += item.Price
 
+		if item.Coupon>0{
+			couponNum++
+		}
+
 	}
+
+	if couponNum >0 {
+		//增加优惠码使用次数
+		if err:=models.UpdateCouponUsedById(); err!nil {
+			fmt.Println("Update Coupon Used error: "+err.Error())
+		}
+	}
+
 	//发邮件
 	now :=time.Now()
 	go SendBillInfo(email,username,billingids,total,now.Format("2006-01-02"),now.AddDate(0, 0, 5).Format("2006-01-02"))
