@@ -14,7 +14,7 @@ type Coupon struct {
 	Id          int       `orm:"column(id);auto"`
 	Code        string    `orm:"column(code);size(32)"`
 	Description string    `orm:"column(description);size(255);null"`
-	Serverids 	string    `orm:"column(description);size(255)"`
+	Serverids 	string    `orm:"column(serverids);size(255)"`
 	Type        int8      `orm:"column(type)"`
 	Content     float64   `orm:"column(content);digits(10);decimals(0)"`
 	Cycle       int8      `orm:"column(cycle)"`
@@ -54,9 +54,10 @@ func GetCouponById(id int) (v *Coupon, err error) {
 	return nil, err
 }
 
-func UpdateCouponUsedById(id int) err error{
-	o := NewOrm()
-	_, err = o.Raw("UPDATE coupon SET usedtimes = usedtimes + 1 where id = ?", id).Exec()
+func UpdateCouponUsedById(id int) error{
+	o := orm.NewOrm()
+	_, err := o.Raw("UPDATE coupon SET usedtimes = usedtimes + 1 where id = ?", id).Exec()
+	return err
 }
 
 func GetCouponByCode(code string)(v *Coupon, err error){

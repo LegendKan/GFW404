@@ -4,6 +4,7 @@ import (
 	"os"
 	"ssmm/controllers"
 	_ "ssmm/routers"
+	"ssmm/template"
 
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
@@ -46,5 +47,6 @@ func main() {
 	}
 	// Register template functions.
 	beego.AddFuncMap("i18n", i18n.Tr)
+	beego.AddFuncMap("minus", template.Minus)
 	beego.Run()
 }

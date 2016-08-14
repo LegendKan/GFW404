@@ -5,7 +5,7 @@ import (
 	"errors"
 	"strconv"
 	"strings"
-	"tmp/ssmm/models"
+	"ssmm/models"
 
 	"github.com/astaxie/beego"
 )

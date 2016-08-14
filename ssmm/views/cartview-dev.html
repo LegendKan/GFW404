@@ -115,7 +115,7 @@
 
 
 					<tr class="summary"><td class="textright">小计: &nbsp;</td><td class="textcenter">￥{{.total}} RMB</td></tr>
-					<tr class="summary"><td class="textright">折扣: &nbsp;</td><td class="textcenter">￥{{.total - .recurringprice}} RMB</td></tr>
+					<tr class="summary"><td class="textright">折扣: &nbsp;</td><td class="textcenter">￥{{minus .total .recurringprice}} RMB</td></tr>
 					<tr class="summary"><td class="textright">当前总计: &nbsp;</td><td class="textcenter">￥{{.total}} RMB</td></tr>
 					<tr class="summary"><td class="textright">下次付款总计: &nbsp;</td><td class="textcenter">
 					{{range .cartitems}}
@@ -133,7 +133,12 @@
 					<input type="hidden" name="validatepromo" value="true" />
 					
 					<strong>优惠码</strong>
+					{{if gt .couponcode|len 0)}}
+					<p>{{.couponcode}}&nbsp;-&nbsp;{{.coupondescription}}</p>
+					<a href="/cart/removepromo" class="btn btn-sm btn-warning">不使用该优惠码</a>
+					{{else}}
 					<input type="text" name="promocode" size="20" />&nbsp<input type="submit" value="验证 >>" />
+					{{end}}
 					</form>
 
 					</td><td width="45%" class="textcenter">

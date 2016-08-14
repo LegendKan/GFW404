@@ -16,6 +16,7 @@ type CartController struct {
 type CartItem struct {
 	Server *models.Server
 	Cycle  int8
+	OriginPrice float64
 	Price  float64
 	RecurringPrice float64
 	CartID int
@@ -49,11 +50,21 @@ func (c *CartController) CheckoutService() {
 	itemss := items.([]CartItem)
 	c.Data["cartitems"] = itemss
 	//fmt.Println(len(itemss), itemss[1].Server.Title)
-	var totalprice float64
+	var totalprice, recurringprice float64
+	couponSession := c.GetSession("coupon")
+	if couponSession != nil {
+		coupon := couponSession.(models.Coupon)
+		c.Data["usecoupon"] = true
+		c.Data["couponcode"] = coupon.Code
+		c.Data["coupondescription"] = coupon.Description
+	} 
 	for _, item := range itemss {
 		totalprice += item.Price
+		recurringprice += item.RecurringPrice
 	}
+	
 	c.Data["total"] = totalprice
+	c.Data["recurring"] = recurringprice
 	//origin ip
 	//ipindex:=strings.Index(c.Ctx.Request.RemoteAddr,":")
 	//c.Data["clientip"]=c.Ctx.Request.RemoteAddr[0:ipindex]
@@ -90,7 +101,35 @@ func (c *CartController) AddService() {
 	}
 	itemss := items.([]CartItem)
 	count := len(itemss)
-	item := CartItem{server, cycletype, price, price, count, password, -1}
+	item := CartItem{server, cycletype, price, price, price, count, password, -1}
+
+	couponSession := c.GetSession("coupon")
+	if couponSession != nil{
+		coupon := couponSession.(models.Coupon)
+		serverids := strings.Split(coupon.Serverids,"|")
+		if (coupon.Serverids == "*" || stringInSlice(strconv.Itoa(item.Server.Id),serverids)) && (coupon.Cycle == 3 || item.Cycle == coupon.Cycle){
+			if coupon.Type == 0 {
+				item.Price = item.Price * coupon.Content/100
+			}else if coupon.Type == 1{
+				item.Price -= coupon.Content
+			}else if coupon.Type ==2 {
+				item.Price = coupon.Content
+			}else{
+				item.Price = item.Price
+			}
+
+			if item.Price <=0 {
+				item.Price = item.OriginPrice
+			}
+
+			if coupon.Recursion ==1{
+				item.RecurringPrice = item.Price
+			}
+
+			item.CouponId = coupon.Id
+		}
+	}
+
 	itemss = append(itemss, item)
 	c.SetSession("cartitems", itemss)
 	fmt.Println(serviceid, cycle, item.Server.Title)
@@ -155,7 +194,7 @@ func stringInSlice(a string, list []string) bool {
 }
 
 func calTotalPrice(itemss []CartItem) float64 {
-	totalprice float64
+	var totalprice float64
 	for _, item := range itemss {
 		totalprice += item.Price
 	}
@@ -200,9 +239,11 @@ func (c *CartController) PromoteFilter() {
 		totalprice = calTotalPrice(itemss)
 		recurringprice = totalprice
 	}else{
-		serverids = strings.Split(coupon.Serverids,"|")
+		serverids := strings.Split(coupon.Serverids,"|")
+		applied := false
 		for _, item := range itemss {
 			if (coupon.Serverids == "*" || stringInSlice(strconv.Itoa(item.Server.Id),serverids)) && (coupon.Cycle == 3 || item.Cycle == coupon.Cycle){
+				applied = true
 				oldvalue := item.Price
 				if coupon.Type == 0 {
 					item.Price = item.Price * coupon.Content/100
@@ -227,6 +268,15 @@ func (c *CartController) PromoteFilter() {
 			totalprice += item.Price
 			recurringprice += item.RecurringPrice
 		}
+
+		if !applied {
+			c.Data["haserror"] = true
+			c.Data["error"] = "没有符合优惠码条件的服务！"
+		}
+		c.SetSession("coupon", coupon)
+		c.Data["usecoupon"] = true
+		c.Data["couponcode"] = coupon.Code
+		c.Data["coupondescription"] = coupon.Description
 	}
 	
 	ipindex:=strings.Index(c.Ctx.Request.RemoteAddr,":")
@@ -235,6 +285,23 @@ func (c *CartController) PromoteFilter() {
 	c.Data["recurring"] = recurringprice
 	c.Data["clientip"]=c.Ctx.Request.RemoteAddr[0:ipindex]
 	c.TplName = "cartview-dev.html"
+}
+
+func (c *CartController) ClearCoupon() {
+	c.Data["IsService"] = true
+
+	items := c.GetSession("cartitems")
+	if items == nil {
+		items = make([]CartItem, 0)
+	}
+	itemss := items.([]CartItem)
+	for _, item := range itemss {
+		item.Price = item.OriginPrice
+		item.RecurringPrice = item.OriginPrice
+	}
+	c.SetSession("cartitems", itemss)
+	c.DelSession("coupon")
+	c.Redirect("/cart/view", 302)
 }
 
 func (c *CartController) PlaceOrder() {
@@ -373,7 +440,7 @@ func (c *CartController) PlaceOrder() {
 	timenow := time.Now()
 	var exprietime time.Time
 	var cyclestr string
-	var couponNum int
+	var couponNum, couponId int
 	for _, item := range itemss {
 		//创建服务和账单
 		if item.Cycle == 1 {
@@ -411,15 +478,16 @@ func (c *CartController) PlaceOrder() {
 		}
 		total += item.Price
 
-		if item.Coupon>0{
+		if item.CouponId>0{
 			couponNum++
+			couponId = item.CouponId
 		}
 
 	}
 
 	if couponNum >0 {
 		//增加优惠码使用次数
-		if err:=models.UpdateCouponUsedById(); err!nil {
+		if err:=models.UpdateCouponUsedById(couponId); err!=nil {
 			fmt.Println("Update Coupon Used error: "+err.Error())
 		}
 	}
